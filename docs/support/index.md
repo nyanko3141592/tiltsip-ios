@@ -3,7 +3,7 @@ layout: page
 title: Support
 ---
 
-# Water Sim Support
+# TiltSip Support
 
 ## How to use
 
@@ -15,13 +15,13 @@ title: Support
 ## Troubleshooting
 
 If the surface does not respond, confirm that motion access is available and
-restart the app. Water Sim intentionally ignores front-to-back tilt.
+restart the app. TiltSip intentionally ignores front-to-back tilt.
 
-For bugs, feedback, or privacy questions, [open a GitHub issue](https://github.com/nyanko3141592/water-sim-ios/issues/new).
+For bugs, feedback, or privacy questions, [open a GitHub issue](https://github.com/nyanko3141592/tiltsip-ios/issues/new).
 
 ## 日本語
 
 - iPhoneを縦向きで持ち、左右へ傾けてください。
 - 液体部分をタップするとビールとコーラを切り替えられます。
 - 上部の飲み物名からグラスを満タンに戻せます。
-- 不具合やお問い合わせは[GitHub Issues](https://github.com/nyanko3141592/water-sim-ios/issues/new)へお願いします。
+- 不具合やお問い合わせは[GitHub Issues](https://github.com/nyanko3141592/tiltsip-ios/issues/new)へお願いします。

@@ -1,8 +1,8 @@
 import SwiftUI
 
 enum AppLinks {
-    static let privacy = URL(string: "https://nyanko3141592.github.io/water-sim-ios/privacy/")!
-    static let support = URL(string: "https://nyanko3141592.github.io/water-sim-ios/support/")!
+    static let privacy = URL(string: "https://nyanko3141592.github.io/tiltsip-ios/privacy/")!
+    static let support = URL(string: "https://nyanko3141592.github.io/tiltsip-ios/support/")!
 }
 
 struct AppInformationView: View {
@@ -47,11 +47,11 @@ struct AppInformationView: View {
                 }
 
                 Section {
-                    LabeledContent("アプリ", value: "Water Sim")
+                    LabeledContent("アプリ", value: "TiltSip")
                     LabeledContent("バージョン", value: versionDescription)
                 }
             }
-            .navigationTitle("Water Sim")
+            .navigationTitle("TiltSip")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {

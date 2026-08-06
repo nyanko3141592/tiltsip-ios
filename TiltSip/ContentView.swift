@@ -25,11 +25,13 @@ struct ContentView: View {
                 MetalGlassView(drink: drink, fill: motion.level, carbonation: 0.82, tilt: motion.tilt * 180 / .pi, isPouring: false)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .accessibilityHidden(true)
-                Color.clear
-                    .contentShape(Rectangle())
-                    .onTapGesture { drink = drink == .beer ? .cola : .beer }
-                    .accessibilityLabel("ビールとコーラを切り替える")
-                    .accessibilityAddTraits(.isButton)
+                if hasCompletedOnboarding {
+                    Color.clear
+                        .contentShape(Rectangle())
+                        .onTapGesture { drink = drink == .beer ? .cola : .beer }
+                        .accessibilityLabel("ビールとコーラを切り替える")
+                        .accessibilityAddTraits(.isButton)
+                }
             }
             .ignoresSafeArea()
             .accessibilityHidden(!hasCompletedOnboarding)
@@ -48,7 +50,7 @@ struct ContentView: View {
                 }
                 .buttonStyle(.plain)
                 .frame(maxHeight: .infinity, alignment: .top)
-                .accessibilityLabel("Water Simの情報と補充")
+                .accessibilityLabel("TiltSipの情報と補充")
             }
 
             if !hasCompletedOnboarding {

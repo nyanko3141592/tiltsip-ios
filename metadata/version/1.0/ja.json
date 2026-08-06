@@ -1,7 +1,7 @@
 {
   "description": "iPhoneの画面全体が、リアルに揺れるグラスになります。\n\n端末を左右に傾けると、水面は世界に対して水平を保ち、画面上端の縁を越えた液体だけが自然に減っていきます。炭酸の泡は重力と逆方向へ上昇し、泡の層や光の反射も傾きと動きに反応します。\n\n・画面いっぱいの液体シミュレーション\n・左右の傾きに反応する流出モデル\n・ビールとコーラをタップで切り替え\n・上部のラベルからいつでも満タンに補充\n・広告、アカウント、トラッキングなし\n\n友人の前でiPhoneをグラスのように傾けて楽しむ、シンプルなジョーク＆シミュレーションアプリです。",
   "keywords": "ビール,液体,物理演算,シミュレーション,ジョーク,炭酸,泡,Metal,傾き,コーラ",
-  "marketingUrl": "https://nyanko3141592.github.io/water-sim-ios/",
+  "marketingUrl": "https://nyanko3141592.github.io/tiltsip-ios/",
   "promotionalText": "iPhoneが、泡までリアルに動くグラスになる。左右に傾けて飲んでみよう。",
-  "supportUrl": "https://nyanko3141592.github.io/water-sim-ios/support/"
+  "supportUrl": "https://nyanko3141592.github.io/tiltsip-ios/support/"
 }

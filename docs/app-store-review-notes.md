@@ -1,6 +1,6 @@
 # App Store Review Notes
 
-Water Sim is an iPhone-only, portrait-only entertainment app. It has no login,
+TiltSip is an iPhone-only, portrait-only entertainment app. It has no login,
 network-backed features, advertising, analytics, or in-app purchases.
 
 ## Review flow

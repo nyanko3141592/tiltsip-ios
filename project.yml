@@ -1,4 +1,4 @@
-name: WaterSim
+name: TiltSip
 options:
   bundleIdPrefix: com.naoki
   deploymentTarget:
@@ -11,24 +11,25 @@ settings:
     MARKETING_VERSION: "1.0"
     CURRENT_PROJECT_VERSION: "1"
 targets:
-  WaterSim:
+  TiltSip:
     type: application
     platform: iOS
     sources:
-      - path: iBeer
+      - path: TiltSip
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.naoki.water-sim
+        PRODUCT_BUNDLE_IDENTIFIER: com.naoki.tiltsip
         TARGETED_DEVICE_FAMILY: "1"
-        INFOPLIST_KEY_CFBundleDisplayName: Water Sim
+        INFOPLIST_KEY_CFBundleDisplayName: TiltSip
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.entertainment
         INFOPLIST_KEY_UIStatusBarStyle: UIStatusBarStyleLightContent
         INFOPLIST_KEY_UIRequiresFullScreen: YES
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         SWIFT_EMIT_LOC_STRINGS: YES
     info:
-      path: iBeer/Info.plist
+      path: TiltSip/Info.plist
       properties:
+        CFBundleDisplayName: TiltSip
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         ITSAppUsesNonExemptEncryption: false

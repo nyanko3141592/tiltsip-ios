@@ -17,7 +17,7 @@ struct OnboardingView: View {
 
             VStack(spacing: 0) {
                 HStack {
-                    Text("WATER SIM")
+                    Text("TILTSIP")
                         .font(.system(size: 12, weight: .bold, design: .rounded))
                         .tracking(2.6)
                     Spacer()

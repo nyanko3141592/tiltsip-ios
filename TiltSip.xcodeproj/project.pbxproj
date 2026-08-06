@@ -7,167 +7,146 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4B88EC77C01305B321E5D669 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A82193806C0ED2E8E4E92945 /* Assets.xcassets */; };
-		85EE021E2138E97E6B0575E6 /* AppInformationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05915878F518E5B9EB2D7BDF /* AppInformationView.swift */; };
-		A29E9B874EF48F87D373007B /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4F2E0058E9CB1E0D40B4C45 /* OnboardingView.swift */; };
-		B425C612B328B822D0F6A1B7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2EDA747E328689A49233643 /* ContentView.swift */; };
-		B9A5DF236C79CC5D66EFFA59 /* MetalGlassView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC55DB52EBC55A4AD023531C /* MetalGlassView.swift */; };
-		BF90921A693D79DE1F13E770 /* Fluid.metal in Sources */ = {isa = PBXBuildFile; fileRef = B35E489FD6C777975AE393FA /* Fluid.metal */; };
-		D09A462B3A530C1B098CE74B /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = DA0C72A733DDE072789F5344 /* PrivacyInfo.xcprivacy */; };
-		D15C073B8D9CE4366D164F87 /* iBeerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DADA64337F380811B52EE5CA /* iBeerApp.swift */; };
+		17EC54D54403674AB4246B42 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4F343E06DD281E5EA45FBE09 /* Assets.xcassets */; };
+		18B7634149E8CD5FCCDBCC77 /* MetalGlassView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8348D116ABB2BD603D920364 /* MetalGlassView.swift */; };
+		2D5E72DA0706E22EF4C1E3E6 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30A312B485D4F0E80815CEC6 /* OnboardingView.swift */; };
+		56D23ACD9896AD2BE423C72D /* AppInformationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74E99FBB7E67FDB2B6665EC6 /* AppInformationView.swift */; };
+		77211FBF29ADA3D57FE58CFC /* TiltSipApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE4F35303E91EB3F07F31DD7 /* TiltSipApp.swift */; };
+		7B63724EF04232835801A31D /* Fluid.metal in Sources */ = {isa = PBXBuildFile; fileRef = 3B307B543C1969F7583AABD7 /* Fluid.metal */; };
+		BE78670980725E0B5BDF7AB2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A362A049AE3A2F656DCB08FB /* ContentView.swift */; };
+		D3CA78F4D2998D540852D264 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = FABD488021BE4882D720EFEB /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		05915878F518E5B9EB2D7BDF /* AppInformationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInformationView.swift; sourceTree = "<group>"; };
-		9E209C91024919CAEA67D9AF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		A82193806C0ED2E8E4E92945 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		B35E489FD6C777975AE393FA /* Fluid.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Fluid.metal; sourceTree = "<group>"; };
-		B4F2E0058E9CB1E0D40B4C45 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
-		CC55DB52EBC55A4AD023531C /* MetalGlassView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalGlassView.swift; sourceTree = "<group>"; };
-		D2EDA747E328689A49233643 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		DA0C72A733DDE072789F5344 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		DADA64337F380811B52EE5CA /* iBeerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iBeerApp.swift; sourceTree = "<group>"; };
-		FDCBAC2D57AA8E535DC25BD1 /* WaterSim.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = WaterSim.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1C525F6338DBA4174C0BC11E /* TiltSip.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TiltSip.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		30A312B485D4F0E80815CEC6 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		3B307B543C1969F7583AABD7 /* Fluid.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Fluid.metal; sourceTree = "<group>"; };
+		4F343E06DD281E5EA45FBE09 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		59E324969E79BA3D45C968E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		74E99FBB7E67FDB2B6665EC6 /* AppInformationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppInformationView.swift; sourceTree = "<group>"; };
+		8348D116ABB2BD603D920364 /* MetalGlassView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalGlassView.swift; sourceTree = "<group>"; };
+		A362A049AE3A2F656DCB08FB /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		FABD488021BE4882D720EFEB /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		FE4F35303E91EB3F07F31DD7 /* TiltSipApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TiltSipApp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
-		00CDC98B455D2690D847672B /* Products */ = {
+		80F775D6032619B77308A825 = {
 			isa = PBXGroup;
 			children = (
-				FDCBAC2D57AA8E535DC25BD1 /* WaterSim.app */,
+				A4F656C147CA51B072E2F88E /* TiltSip */,
+				9C015172E6EA9EA87E700102 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		9C015172E6EA9EA87E700102 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1C525F6338DBA4174C0BC11E /* TiltSip.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		6F70BA3EA5B6172996624F0B = {
+		A4F656C147CA51B072E2F88E /* TiltSip */ = {
 			isa = PBXGroup;
 			children = (
-				9D18961F0BE25D84267DBD73 /* iBeer */,
-				00CDC98B455D2690D847672B /* Products */,
+				74E99FBB7E67FDB2B6665EC6 /* AppInformationView.swift */,
+				4F343E06DD281E5EA45FBE09 /* Assets.xcassets */,
+				A362A049AE3A2F656DCB08FB /* ContentView.swift */,
+				3B307B543C1969F7583AABD7 /* Fluid.metal */,
+				59E324969E79BA3D45C968E6 /* Info.plist */,
+				8348D116ABB2BD603D920364 /* MetalGlassView.swift */,
+				30A312B485D4F0E80815CEC6 /* OnboardingView.swift */,
+				FABD488021BE4882D720EFEB /* PrivacyInfo.xcprivacy */,
+				FE4F35303E91EB3F07F31DD7 /* TiltSipApp.swift */,
 			);
-			sourceTree = "<group>";
-		};
-		9D18961F0BE25D84267DBD73 /* iBeer */ = {
-			isa = PBXGroup;
-			children = (
-				05915878F518E5B9EB2D7BDF /* AppInformationView.swift */,
-				A82193806C0ED2E8E4E92945 /* Assets.xcassets */,
-				D2EDA747E328689A49233643 /* ContentView.swift */,
-				B35E489FD6C777975AE393FA /* Fluid.metal */,
-				DADA64337F380811B52EE5CA /* iBeerApp.swift */,
-				9E209C91024919CAEA67D9AF /* Info.plist */,
-				CC55DB52EBC55A4AD023531C /* MetalGlassView.swift */,
-				B4F2E0058E9CB1E0D40B4C45 /* OnboardingView.swift */,
-				DA0C72A733DDE072789F5344 /* PrivacyInfo.xcprivacy */,
-			);
-			path = iBeer;
+			path = TiltSip;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		7B1FCB07ED5484745734806C /* WaterSim */ = {
+		139597A20FBEE197607924C7 /* TiltSip */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 6EB2BF0FB37D344523E03850 /* Build configuration list for PBXNativeTarget "WaterSim" */;
+			buildConfigurationList = 6813369D37C1ACB7DE71926F /* Build configuration list for PBXNativeTarget "TiltSip" */;
 			buildPhases = (
-				0A676F223F81072ACD13B04A /* Sources */,
-				3ECCFB140B78BF4BEA2E8810 /* Resources */,
+				99A21C0CDF62568A5D478A6D /* Sources */,
+				E4295B43AB54B88BDE84DB66 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = WaterSim;
+			name = TiltSip;
 			packageProductDependencies = (
 			);
-			productName = WaterSim;
-			productReference = FDCBAC2D57AA8E535DC25BD1 /* WaterSim.app */;
+			productName = TiltSip;
+			productReference = 1C525F6338DBA4174C0BC11E /* TiltSip.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		F3F09E46D2348B02E4AF74E9 /* Project object */ = {
+		A47471CE389BF6258C68BA86 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
-					7B1FCB07ED5484745734806C = {
+					139597A20FBEE197607924C7 = {
 						DevelopmentTeam = CW97U5J24N;
 					};
 				};
 			};
-			buildConfigurationList = 07E83E166F7C35AF01548E77 /* Build configuration list for PBXProject "WaterSim" */;
+			buildConfigurationList = 1A73C858EF1C574B0B3134A5 /* Build configuration list for PBXProject "TiltSip" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				Base,
 				en,
 			);
-			mainGroup = 6F70BA3EA5B6172996624F0B;
+			mainGroup = 80F775D6032619B77308A825;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 00CDC98B455D2690D847672B /* Products */;
+			productRefGroup = 9C015172E6EA9EA87E700102 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				7B1FCB07ED5484745734806C /* WaterSim */,
+				139597A20FBEE197607924C7 /* TiltSip */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		3ECCFB140B78BF4BEA2E8810 /* Resources */ = {
+		E4295B43AB54B88BDE84DB66 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4B88EC77C01305B321E5D669 /* Assets.xcassets in Resources */,
-				D09A462B3A530C1B098CE74B /* PrivacyInfo.xcprivacy in Resources */,
+				17EC54D54403674AB4246B42 /* Assets.xcassets in Resources */,
+				D3CA78F4D2998D540852D264 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		0A676F223F81072ACD13B04A /* Sources */ = {
+		99A21C0CDF62568A5D478A6D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				85EE021E2138E97E6B0575E6 /* AppInformationView.swift in Sources */,
-				B425C612B328B822D0F6A1B7 /* ContentView.swift in Sources */,
-				BF90921A693D79DE1F13E770 /* Fluid.metal in Sources */,
-				B9A5DF236C79CC5D66EFFA59 /* MetalGlassView.swift in Sources */,
-				A29E9B874EF48F87D373007B /* OnboardingView.swift in Sources */,
-				D15C073B8D9CE4366D164F87 /* iBeerApp.swift in Sources */,
+				56D23ACD9896AD2BE423C72D /* AppInformationView.swift in Sources */,
+				BE78670980725E0B5BDF7AB2 /* ContentView.swift in Sources */,
+				7B63724EF04232835801A31D /* Fluid.metal in Sources */,
+				18B7634149E8CD5FCCDBCC77 /* MetalGlassView.swift in Sources */,
+				2D5E72DA0706E22EF4C1E3E6 /* OnboardingView.swift in Sources */,
+				77211FBF29ADA3D57FE58CFC /* TiltSipApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		136E7CC9DD16947A191FFA4C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				INFOPLIST_FILE = iBeer/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Water Sim";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
-				INFOPLIST_KEY_UIRequiresFullScreen = YES;
-				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.naoki.water-sim";
-				SDKROOT = iphoneos;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Release;
-		};
-		7160FEAE0E21C8A7B03D7883 /* Release */ = {
+		18DD3E1CE406CFF80C8B1E58 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -227,13 +206,13 @@
 			};
 			name = Release;
 		};
-		A569E59019E71BA1ABAAB8F3 /* Debug */ = {
+		266805CABC49E6557265F952 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				INFOPLIST_FILE = iBeer/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Water Sim";
+				INFOPLIST_FILE = TiltSip/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = TiltSip;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
@@ -241,14 +220,14 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.naoki.water-sim";
+				PRODUCT_BUNDLE_IDENTIFIER = com.naoki.tiltsip;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
-		B384F008DF3522CF3324B77C /* Debug */ = {
+		38EAC39070EB50957AFA3A6D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -315,28 +294,49 @@
 			};
 			name = Debug;
 		};
+		77AF3B37320714A7861A1C48 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = TiltSip/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = TiltSip;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.naoki.tiltsip;
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		07E83E166F7C35AF01548E77 /* Build configuration list for PBXProject "WaterSim" */ = {
+		1A73C858EF1C574B0B3134A5 /* Build configuration list for PBXProject "TiltSip" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B384F008DF3522CF3324B77C /* Debug */,
-				7160FEAE0E21C8A7B03D7883 /* Release */,
+				38EAC39070EB50957AFA3A6D /* Debug */,
+				18DD3E1CE406CFF80C8B1E58 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		6EB2BF0FB37D344523E03850 /* Build configuration list for PBXNativeTarget "WaterSim" */ = {
+		6813369D37C1ACB7DE71926F /* Build configuration list for PBXNativeTarget "TiltSip" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A569E59019E71BA1ABAAB8F3 /* Debug */,
-				136E7CC9DD16947A191FFA4C /* Release */,
+				266805CABC49E6557265F952 /* Debug */,
+				77AF3B37320714A7861A1C48 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = F3F09E46D2348B02E4AF74E9 /* Project object */;
+	rootObject = A47471CE389BF6258C68BA86 /* Project object */;
 }

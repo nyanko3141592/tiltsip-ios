@@ -1,6 +1,6 @@
-# Water Sim
+# TiltSip
 
-Water Sim turns the entire iPhone display into a playful, physics-driven glass.
+TiltSip turns the entire iPhone display into a playful, physics-driven glass.
 Tilt the phone sideways to drink, watch the world-horizontal surface spill at the
 rim, and tap the liquid to switch between beer and cola.
 
@@ -25,7 +25,7 @@ not collect, retain, or transmit personal data. See the [privacy policy](docs/pr
 
 ```sh
 xcodegen generate
-xcodebuild -project WaterSim.xcodeproj -scheme WaterSim -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 17 Pro Max' build
+xcodebuild -project TiltSip.xcodeproj -scheme TiltSip -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 17 Pro Max' build
 ```
 
 ## Requirements

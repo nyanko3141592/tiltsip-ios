@@ -1,9 +1,8 @@
 import SwiftUI
 
 @main
-struct iBeerApp: App {
+struct TiltSipApp: App {
     var body: some Scene {
         WindowGroup { ContentView() }
     }
 }
-
