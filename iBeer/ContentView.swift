@@ -421,8 +421,9 @@ private struct FluidCanvas: View {
                 // Final optical pass: a very soft diagonal reflection from the phone's
                 // cover glass keeps the full-screen liquid from feeling like a flat render.
                 var coverGlare = Path()
-                coverGlare.move(to: CGPoint(x: -size.width * 0.18, y: size.height * 0.35))
-                coverGlare.addLine(to: CGPoint(x: size.width * 0.56, y: -20))
+                let glareShift = CGFloat(tilt) * size.width * 0.06
+                coverGlare.move(to: CGPoint(x: -size.width * 0.18 + glareShift, y: size.height * 0.35))
+                coverGlare.addLine(to: CGPoint(x: size.width * 0.56 + glareShift, y: -20))
                 context.drawLayer { layer in
                     layer.addFilter(.blur(radius: 24))
                     layer.stroke(coverGlare, with: .color(.white.opacity(beer ? 0.028 : 0.012)), lineWidth: 30)
