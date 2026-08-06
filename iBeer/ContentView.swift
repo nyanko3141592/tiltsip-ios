@@ -152,7 +152,9 @@ private final class MotionManager: ObservableObject {
             guard let self, let motion else { return }
             let roll = motion.attitude.roll
             let pitch = abs(motion.attitude.pitch)
-            let targetTilt = max(-0.55, min(0.55, roll))
+            // Roll handles side-to-side slosh; pitch makes the phone behave like a glass while drinking.
+            let forwardTilt = sin(motion.attitude.pitch) * 0.62
+            let targetTilt = max(-0.55, min(0.55, roll + forwardTilt))
             let springForce = (targetTilt - self.tilt) * 13.0 - self.tiltVelocity * 3.8
             self.tiltVelocity += springForce / 30.0
             self.tilt += self.tiltVelocity / 30.0
