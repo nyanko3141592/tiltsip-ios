@@ -401,9 +401,9 @@ private struct FluidCanvas: View {
                     layer.addFilter(.blur(radius: 8))
                     for band in 0..<5 {
                         var caustic = Path()
-                        let y = surface + 90 + CGFloat(band) * size.height * 0.13
+                        let y = surface + 90 + CGFloat(band) * size.height * 0.13 + CGFloat(sin(t * 0.35 + Double(band)) * 5.0)
                         caustic.move(to: CGPoint(x: -20, y: y))
-                        caustic.addCurve(to: CGPoint(x: size.width + 20, y: y + 10), control1: CGPoint(x: size.width * 0.28, y: y - 12), control2: CGPoint(x: size.width * 0.72, y: y + 18))
+                        caustic.addCurve(to: CGPoint(x: size.width + 20, y: y + 10 + CGFloat(sin(t * 0.4 + Double(band)) * 3.0)), control1: CGPoint(x: size.width * 0.28, y: y - 12), control2: CGPoint(x: size.width * 0.72, y: y + 18))
                         layer.stroke(caustic, with: .color(.white.opacity(beer ? 0.035 : 0.018)), lineWidth: 7)
                     }
                 }
