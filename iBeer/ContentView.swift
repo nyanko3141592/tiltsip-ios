@@ -164,7 +164,9 @@ private struct FluidCanvas: View {
                     let normalizedX = Double(x / size.width)
                     let wave = sin(normalizedX * 15.0 + t * 0.9) * waveAmplitude
                     let ripple = sin(normalizedX * 31.0 - t * 0.5) * waveAmplitude * 0.28
-                    surfaceGleam.addLine(to: CGPoint(x: x, y: surface + CGFloat(wave + ripple) + slope * (x - size.width / 2) - 1))
+                    let micro = sin(normalizedX * 73.0 + t * 1.7 + flow * 4.0) * (0.7 + Double(energy) * 2.0)
+                    let cross = sin(normalizedX * 9.0 - t * 0.7 + tilt * 5.0) * abs(tilt) * 4.0
+                    surfaceGleam.addLine(to: CGPoint(x: x, y: surface + CGFloat(wave + ripple + micro + cross) + slope * (x - size.width / 2) - 1))
                 }
                 context.drawLayer { layer in
                     layer.addFilter(.blur(radius: 2.5))
