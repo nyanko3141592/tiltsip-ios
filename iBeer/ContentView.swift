@@ -116,6 +116,17 @@ private struct FluidCanvas: View {
                 context.fill(liquid, with: .linearGradient(Gradient(colors: [.black.opacity(0.18), .clear, .black.opacity(0.24)]), startPoint: CGPoint(x: 0, y: 0), endPoint: CGPoint(x: size.width, y: 0)))
                 context.fill(liquid, with: .radialGradient(Gradient(colors: [.clear, .black.opacity(beer ? 0.16 : 0.24)]), center: CGPoint(x: size.width * 0.5, y: size.height * 1.08), startRadius: size.width * 0.08, endRadius: size.width * 0.92))
 
+                // Beer glows just below the head where light scatters through foam,
+                // then quickly attenuates as the liquid gets deeper.
+                if beer {
+                    var surfaceScatter = Path()
+                    surfaceScatter.addRect(CGRect(x: -20, y: surface - 2, width: size.width + 40, height: 86))
+                    context.drawLayer { layer in
+                        layer.clip(to: liquid)
+                        layer.fill(surfaceScatter, with: .linearGradient(Gradient(colors: [.white.opacity(0.18), .yellow.opacity(0.05), .clear]), startPoint: CGPoint(x: 0, y: surface), endPoint: CGPoint(x: 0, y: surface + 86)))
+                    }
+                }
+
                 // Light attenuates through the drink. These broad, moving shafts are
                 // deliberately soft so they read as volume, not graphic stripes.
                 if beer {
