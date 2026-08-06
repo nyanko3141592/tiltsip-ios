@@ -49,17 +49,18 @@ private struct FoamPhotoTexture: View {
                 let slope = CGFloat(tan(surfaceAngle))
                 let surface = conservedSurfaceCenter(size: proxy.size, fill: fill, slope: slope)
                 let foamHeight = 14.0 + CGFloat(fill) * 46.0
-                let shimmer = sin(timeline.date.timeIntervalSinceReferenceDate * 0.72) * 0.018
+                let shimmer = sin(timeline.date.timeIntervalSinceReferenceDate * 0.72) * 0.012
                 let drift = CGFloat(sin(timeline.date.timeIntervalSinceReferenceDate * 0.31) * 1.2)
+                let tiltFade = 1.0 - min(0.58, abs(tilt) * 0.46)
                 Image("FoamTextureV2")
                     .resizable()
                     .scaledToFill()
                     .frame(width: proxy.size.width, height: foamHeight + 28)
                     .clipped()
-                    .opacity(0.145 + shimmer + energy * 0.018)
+                    .opacity((0.105 + shimmer + energy * 0.018) * tiltFade)
                     .blendMode(.screen)
                     .rotationEffect(.radians(tilt), anchor: .center)
-                    .offset(x: drift + CGFloat(tilt) * 22.0, y: surface - foamHeight)
+                    .offset(x: drift, y: surface - foamHeight)
             }
         }
         .allowsHitTesting(false)
@@ -97,22 +98,26 @@ private struct FluidCanvas: View {
                 let surfaceAngle = max(-1.15, min(1.15, tilt))
                 let slope = CGFloat(tan(surfaceAngle))
                 let surface = conservedSurfaceCenter(size: size, fill: fill, slope: slope)
-                let waveAmplitude = 4.0 + CGFloat(energy) * 18.0
+                let surfaceY: (CGFloat) -> CGFloat = { x in
+                    surface + slope * (x - size.width * 0.5)
+                }
+                let waveAmplitude = 1.5 + CGFloat(energy) * 14.0
                 let foamHeight = 14.0 + CGFloat(fill) * 46.0
+                let foamNormalScale = min(1.65, sqrt(1.0 + slope * slope))
+                let foamVerticalHeight = foamHeight * foamNormalScale
                 var liquid = Path()
-                liquid.move(to: CGPoint(x: 0, y: surface))
+                liquid.move(to: CGPoint(x: 0, y: surfaceY(0)))
                 for x in stride(from: 0, through: size.width, by: 8) {
                     let normalizedX = Double(x / size.width)
                     let wave1 = sin(normalizedX * 15.0 + t * 0.9) * waveAmplitude
                     let wave2 = sin(normalizedX * 31.0 - t * 0.5) * waveAmplitude * 0.28
-                    let microRipple = sin(normalizedX * 73.0 + t * 1.7 + flow * 4.0) * (0.7 + Double(energy) * 2.0)
-                    let crossWave = sin(normalizedX * 9.0 - t * 0.7 + tilt * 5.0) * abs(tilt) * 4.0
+                    let microRipple = sin(normalizedX * 73.0 + t * 1.7 + flow * 4.0) * (0.35 + Double(energy) * 1.8)
+                    let crossWave = sin(normalizedX * 9.0 - t * 0.7 + tilt * 5.0) * Double(energy) * 3.5
                     let wakePhase = normalizedX * 44.0 - t * 2.4 + flow * 3.0
                     let wakeEnvelope = exp(-abs(normalizedX - 0.5) * 2.8)
                     let wake = sin(wakePhase) * 7.0 * Double(energy) * wakeEnvelope
                     let waveOffset = CGFloat(wave1 + wave2 + wake + microRipple + crossWave)
-                    let slopeOffset = slope * (x - size.width / 2)
-                    let y = surface + waveOffset + slopeOffset
+                    let y = surfaceY(x) + waveOffset
                     liquid.addLine(to: CGPoint(x: x, y: y))
                 }
                 liquid.addLine(to: CGPoint(x: size.width, y: size.height))
@@ -173,13 +178,13 @@ private struct FluidCanvas: View {
                 // The phone edges act like the inside wall of a glass: a faint meniscus
                 // and side falloff make the liquid feel curved instead of painted flat.
                 var surfaceGleam = Path()
-                surfaceGleam.move(to: CGPoint(x: -8, y: surface + 2))
+                surfaceGleam.move(to: CGPoint(x: -8, y: surfaceY(-8) + 2))
                 for x in stride(from: 0, through: size.width, by: 8) {
                     let normalizedX = Double(x / size.width)
                     let wave = sin(normalizedX * 15.0 + t * 0.9) * waveAmplitude
                     let ripple = sin(normalizedX * 31.0 - t * 0.5) * waveAmplitude * 0.28
-                    let micro = sin(normalizedX * 73.0 + t * 1.7 + flow * 4.0) * (0.7 + Double(energy) * 2.0)
-                    let cross = sin(normalizedX * 9.0 - t * 0.7 + tilt * 5.0) * abs(tilt) * 4.0
+                    let micro = sin(normalizedX * 73.0 + t * 1.7 + flow * 4.0) * (0.35 + Double(energy) * 1.8)
+                    let cross = sin(normalizedX * 9.0 - t * 0.7 + tilt * 5.0) * Double(energy) * 3.5
                     surfaceGleam.addLine(to: CGPoint(x: x, y: surface + CGFloat(wave + ripple + micro + cross) + slope * (x - size.width / 2) - 1))
                 }
                 context.drawLayer { layer in
@@ -188,11 +193,13 @@ private struct FluidCanvas: View {
                 }
 
                 var leftMeniscus = Path()
-                leftMeniscus.move(to: CGPoint(x: 1, y: surface - 10))
-                leftMeniscus.addCurve(to: CGPoint(x: 10, y: surface + 20), control1: CGPoint(x: 1, y: surface - 2), control2: CGPoint(x: 5, y: surface + 10))
+                let leftSurface = surfaceY(0)
+                let rightSurface = surfaceY(size.width)
+                leftMeniscus.move(to: CGPoint(x: 1, y: leftSurface - 10))
+                leftMeniscus.addCurve(to: CGPoint(x: 10, y: leftSurface + 20), control1: CGPoint(x: 1, y: leftSurface - 2), control2: CGPoint(x: 5, y: leftSurface + 10))
                 var rightMeniscus = Path()
-                rightMeniscus.move(to: CGPoint(x: size.width - 1, y: surface - 10))
-                rightMeniscus.addCurve(to: CGPoint(x: size.width - 10, y: surface + 20), control1: CGPoint(x: size.width - 1, y: surface - 2), control2: CGPoint(x: size.width - 5, y: surface + 10))
+                rightMeniscus.move(to: CGPoint(x: size.width - 1, y: rightSurface - 10))
+                rightMeniscus.addCurve(to: CGPoint(x: size.width - 10, y: rightSurface + 20), control1: CGPoint(x: size.width - 1, y: rightSurface - 2), control2: CGPoint(x: size.width - 5, y: rightSurface + 10))
                 context.drawLayer { layer in
                     layer.addFilter(.blur(radius: 3))
                     layer.stroke(leftMeniscus, with: .color(.black.opacity(beer ? 0.28 : 0.34)), lineWidth: 7)
@@ -203,10 +210,10 @@ private struct FluidCanvas: View {
                 context.drawLayer { layer in
                     layer.addFilter(.blur(radius: 9))
                     var leftEdge = Path()
-                    leftEdge.move(to: CGPoint(x: 3, y: surface + 18))
+                    leftEdge.move(to: CGPoint(x: 3, y: leftSurface + 18))
                     leftEdge.addLine(to: CGPoint(x: 3, y: size.height))
                     var rightEdge = Path()
-                    rightEdge.move(to: CGPoint(x: size.width - 3, y: surface + 18))
+                    rightEdge.move(to: CGPoint(x: size.width - 3, y: rightSurface + 18))
                     rightEdge.addLine(to: CGPoint(x: size.width - 3, y: size.height))
                     let edgeLight = beer ? 0.075 + abs(tilt) * 0.035 : 0.03
                     let edgeShade = beer ? 0.17 + abs(tilt) * 0.025 : 0.22
@@ -214,24 +221,28 @@ private struct FluidCanvas: View {
                     layer.stroke(rightEdge, with: .color(.black.opacity(edgeShade)), lineWidth: 14)
                 }
 
-                let foam = beer ? Color(red: 1.0, green: 0.90, blue: 0.66) : Color(red: 0.52, green: 0.30, blue: 0.18)
+                let foam = beer ? Color(red: 1.0, green: 0.94, blue: 0.78) : Color(red: 0.52, green: 0.30, blue: 0.18)
                 var foamBand = Path()
-                foamBand.move(to: CGPoint(x: 0, y: surface - foamHeight - slope * size.width / 2))
+                foamBand.move(to: CGPoint(x: 0, y: surfaceY(0) - foamVerticalHeight))
                 for x in stride(from: 0, through: size.width, by: 8) {
                     let normalizedX = Double(x / size.width)
-                    let foamWave = sin(normalizedX * 17.0 + t * 0.55) * (3 + CGFloat(energy) * 8)
-                    let foamRipple = sin(normalizedX * 41.0 - t * 0.9 + flow * 2.0) * (1.2 + CGFloat(energy) * 2.8)
-                    let y = surface - foamHeight + foamWave + foamRipple + slope * (x - size.width / 2)
+                    let foamWave = sin(normalizedX * 17.0 + t * 0.55) * (1.8 + CGFloat(energy) * 7)
+                    let foamRipple = sin(normalizedX * 41.0 - t * 0.9 + flow * 2.0) * (0.6 + CGFloat(energy) * 2.4)
+                    let y = surfaceY(x) - foamVerticalHeight + foamWave + foamRipple
                     foamBand.addLine(to: CGPoint(x: x, y: y))
                 }
-                foamBand.addLine(to: CGPoint(x: size.width, y: surface + 27))
-                foamBand.addLine(to: CGPoint(x: 0, y: surface + 27))
+                for x in stride(from: size.width, through: 0, by: -8) {
+                    foamBand.addLine(to: CGPoint(x: x, y: surfaceY(x) + 27 * foamNormalScale))
+                }
                 foamBand.closeSubpath()
-                context.fill(foamBand, with: .linearGradient(Gradient(colors: [foam.opacity(0.98), foam.opacity(0.70)]), startPoint: CGPoint(x: 0, y: surface - foamHeight), endPoint: CGPoint(x: 0, y: surface + 27)))
+                context.fill(foamBand, with: .linearGradient(Gradient(colors: [foam.opacity(0.98), foam.opacity(0.70)]), startPoint: CGPoint(x: 0, y: surface - foamVerticalHeight), endPoint: CGPoint(x: 0, y: surface + 27 * foamNormalScale)))
 
                 var foamShadow = Path()
-                foamShadow.move(to: CGPoint(x: -10, y: surface + 5 + CGFloat(flow) * 2.0))
-                foamShadow.addCurve(to: CGPoint(x: size.width + 10, y: surface + 7 - CGFloat(flow) * 2.0), control1: CGPoint(x: size.width * 0.28, y: surface - 1 + CGFloat(flow) * 3.0), control2: CGPoint(x: size.width * 0.70, y: surface + 14 - CGFloat(flow) * 3.0))
+                foamShadow.move(to: CGPoint(x: -10, y: surfaceY(-10) + 5 + CGFloat(flow) * 2.0))
+                for x in stride(from: 0, through: size.width + 10, by: 12) {
+                    let shadowWave = CGFloat(sin(Double(x / size.width) * 12.0 + t * 0.5)) * (1.5 + CGFloat(energy) * 2.0)
+                    foamShadow.addLine(to: CGPoint(x: x, y: surfaceY(x) + 6 + shadowWave))
+                }
                 context.drawLayer { layer in
                     layer.addFilter(.blur(radius: 7))
                     layer.stroke(foamShadow, with: .color(.black.opacity(beer ? 0.24 : 0.16)), lineWidth: 10)
@@ -246,7 +257,7 @@ private struct FluidCanvas: View {
                     let radius = CGFloat(4.0 + radiusNoise * 9.0)
                     let yNoise = sin(seed * 2.17) * 0.5 + 0.5
                     let yOffset = CGFloat(sin(t * 0.24 + seed) * 1.4)
-                    let y = surface - foamHeight * (0.36 + CGFloat(yNoise) * 0.55) + yOffset
+                    let y = surfaceY(x) - foamVerticalHeight * (0.36 + CGFloat(yNoise) * 0.55) + yOffset
                     let dome = CGRect(x: x - radius, y: y - radius * 0.60, width: radius * 2, height: radius * 1.20)
                     context.fill(Path(ellipseIn: dome), with: .radialGradient(Gradient(colors: [Color.white.opacity(0.40), foam.opacity(0.24), Color.black.opacity(0.12)]), center: CGPoint(x: x - radius * 0.24, y: y - radius * 0.26), startRadius: 0, endRadius: radius * 1.25))
                 }
@@ -256,7 +267,7 @@ private struct FluidCanvas: View {
                     for i in 0..<14 {
                         let seed = Double(i) * 15.617
                         let x = CGFloat((sin(seed * 1.8 + flow) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
-                        let y = surface + CGFloat(sin(seed * 2.4 + t * 1.6) * energy * 11.0) + CGFloat((sin(seed) * 0.5 + 0.5)) * 18
+                        let y = surfaceY(x) + CGFloat(sin(seed * 2.4 + t * 1.6) * energy * 11.0) + CGFloat((sin(seed) * 0.5 + 0.5)) * 18
                         let radius = CGFloat(0.7 + Double(i % 3) * 0.55) * CGFloat(0.7 + energy)
                         context.fill(Path(ellipseIn: CGRect(x: x - radius, y: y - radius, width: radius * 2, height: radius * 2)), with: .color(.white.opacity(0.28 * energy)))
                     }
@@ -265,7 +276,7 @@ private struct FluidCanvas: View {
                 for i in 0..<42 {
                     let seed = Double(i) * 9.173
                     let x = CGFloat((sin(seed) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
-                    let y = surface - foamHeight + CGFloat((sin(seed * 1.7 + t * 0.3) * 0.5 + 0.5)) * (foamHeight + 20)
+                    let y = surfaceY(x) - foamVerticalHeight + CGFloat((sin(seed * 1.7 + t * 0.3) * 0.5 + 0.5)) * (foamVerticalHeight + 20)
                     let radius = CGFloat(2 + Double(i % 4) * 2)
                     context.fill(Path(ellipseIn: CGRect(x: x - radius, y: y - radius * 0.6, width: radius * 2, height: radius * 1.2)), with: .color(foam.opacity(0.22)))
                 }
@@ -273,7 +284,7 @@ private struct FluidCanvas: View {
                 for i in 0..<24 {
                     let seed = Double(i) * 6.417
                     let x = CGFloat((sin(seed * 2.1) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
-                    let y = surface - 8 + CGFloat((sin(seed * 1.3) * 0.5 + 0.5)) * 28
+                    let y = surfaceY(x) - 8 + CGFloat((sin(seed * 1.3) * 0.5 + 0.5)) * 28
                     let radius = CGFloat(2 + (i % 3))
                     context.fill(Path(ellipseIn: CGRect(x: x - radius, y: y - radius * 0.55, width: radius * 2, height: radius * 1.1)), with: .color(.black.opacity(0.065)))
                 }
@@ -282,7 +293,7 @@ private struct FluidCanvas: View {
                 for i in 0..<30 {
                     let seed = Double(i) * 4.271
                     let x = CGFloat((sin(seed * 2.7) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
-                    let y = surface - foamHeight * 0.72 + CGFloat((sin(seed * 1.9 + t * 0.22) * 0.5 + 0.5)) * (foamHeight * 1.35)
+                    let y = surfaceY(x) - foamVerticalHeight * 0.72 + CGFloat((sin(seed * 1.9 + t * 0.22) * 0.5 + 0.5)) * (foamVerticalHeight * 1.35)
                     let radius = CGFloat(3 + (i % 4) * 2)
                     let cell = Path(ellipseIn: CGRect(x: x - radius, y: y - radius * 0.62, width: radius * 2, height: radius * 1.24))
                     context.stroke(cell, with: .color(.white.opacity(beer ? 0.34 : 0.16)), lineWidth: 0.9)
@@ -295,7 +306,7 @@ private struct FluidCanvas: View {
                 for i in 0..<16 {
                     let seed = Double(i) * 11.843
                     let x = CGFloat((sin(seed * 1.7) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
-                    let y = surface - foamHeight * 0.58 + CGFloat((sin(seed * 2.3 + t * 0.16) * 0.5 + 0.5)) * (foamHeight * 0.82)
+                    let y = surfaceY(x) - foamVerticalHeight * 0.58 + CGFloat((sin(seed * 2.3 + t * 0.16) * 0.5 + 0.5)) * (foamVerticalHeight * 0.82)
                     let radius = CGFloat(4 + (i % 3) * 2)
                     let bubbleRect = CGRect(x: x - radius, y: y - radius * 0.58, width: radius * 2, height: radius * 1.16)
                     context.fill(Path(ellipseIn: bubbleRect), with: .radialGradient(Gradient(colors: [.white.opacity(0.44), foam.opacity(0.18), .black.opacity(0.16)]), center: CGPoint(x: x - radius * 0.28, y: y - radius * 0.24), startRadius: 0, endRadius: radius * 1.25))
@@ -303,8 +314,11 @@ private struct FluidCanvas: View {
                 }
 
                 var foamReflection = Path()
-                foamReflection.move(to: CGPoint(x: -20, y: surface + 5))
-                foamReflection.addCurve(to: CGPoint(x: size.width + 20, y: surface + 8), control1: CGPoint(x: size.width * 0.25, y: surface - 2), control2: CGPoint(x: size.width * 0.72, y: surface + 16))
+                foamReflection.move(to: CGPoint(x: -20, y: surfaceY(-20) + 5))
+                for x in stride(from: 0, through: size.width + 20, by: 12) {
+                    let reflectionWave = CGFloat(sin(Double(x / size.width) * 10.0 + t * 0.45)) * 2.0
+                    foamReflection.addLine(to: CGPoint(x: x, y: surfaceY(x) + 7 + reflectionWave))
+                }
                 context.drawLayer { layer in
                     layer.addFilter(.blur(radius: 5))
                     layer.stroke(foamReflection, with: .color(.white.opacity(beer ? 0.36 : 0.12)), lineWidth: 3.5)
@@ -314,7 +328,7 @@ private struct FluidCanvas: View {
                     for i in 0..<9 {
                         let seed = Double(i) * 8.31
                         let x = CGFloat((sin(seed * 1.91 + t * 0.12) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
-                        let y = surface - foamHeight * 0.14 + CGFloat(sin(seed * 1.4 + t * 0.4) * 3.0)
+                        let y = surfaceY(x) - foamVerticalHeight * 0.14 + CGFloat(sin(seed * 1.4 + t * 0.4) * 3.0)
                         var wetHighlight = Path()
                         wetHighlight.move(to: CGPoint(x: x - 8, y: y))
                         wetHighlight.addCurve(to: CGPoint(x: x + 10, y: y + 1), control1: CGPoint(x: x - 3, y: y - 3), control2: CGPoint(x: x + 4, y: y + 3))
@@ -323,12 +337,16 @@ private struct FluidCanvas: View {
                     for i in 0..<12 {
                         let seed = Double(i) * 6.73
                         let x = CGFloat((sin(seed * 2.11) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
-                        let y = surface + 11 + CGFloat((sin(seed * 1.8) * 0.5 + 0.5) * 12)
+                        let y = surfaceY(x) + 11 + CGFloat((sin(seed * 1.8) * 0.5 + 0.5) * 12)
                         let radius = CGFloat(2.0 + Double(i % 3))
                         let lace = Path(ellipseIn: CGRect(x: x - radius, y: y - radius * 0.45, width: radius * 2, height: radius * 0.9))
                         context.stroke(lace, with: .color(.white.opacity(0.16)), lineWidth: 0.7)
                     }
                 }
+
+                // From here down, carbonation and internal light must remain below
+                // the tilted free surface instead of leaking into the empty region.
+                context.clip(to: liquid)
 
                 var sheen = Path()
                 let sheenDrift = CGFloat(flow) * size.width * 0.045
@@ -475,6 +493,8 @@ private final class MotionManager: ObservableObject {
     @Published var isDrinking = false
     private let manager = CMMotionManager()
     private var tiltVelocity: Double = 0
+    private var drainRate: Double = 0
+    private var lastMotionTimestamp: TimeInterval?
 
     func start() {
         guard manager.isDeviceMotionAvailable, !manager.isDeviceMotionActive else { return }
@@ -482,21 +502,27 @@ private final class MotionManager: ObservableObject {
         manager.startDeviceMotionUpdates(using: .xArbitraryZVertical, to: .main) { [weak self] motion, _ in
             guard let self, let motion else { return }
             let gravity = motion.gravity
+            let rawDelta = lastMotionTimestamp.map { motion.timestamp - $0 } ?? (1.0 / 30.0)
+            let deltaTime = max(1.0 / 120.0, min(1.0 / 15.0, rawDelta))
+            lastMotionTimestamp = motion.timestamp
             // A free surface is perpendicular to gravity. Project gravity onto the
             // display plane and derive the screen-space world horizon directly.
             let worldHorizon = atan2(-gravity.x, -gravity.y)
             let targetTilt = max(-1.15, min(1.15, worldHorizon))
-            let springForce = (targetTilt - self.tilt) * 13.0 - self.tiltVelocity * 3.8
-            self.tiltVelocity += springForce / 30.0
-            // A real glass reacts to a quick hand movement before its angle settles.
-            // Feed lateral user acceleration into the same inertial slosh velocity.
+            let previousTilt = self.tilt
+            let horizonResponse = 1.0 - exp(-deltaTime * 16.0)
+            self.tilt += (targetTilt - self.tilt) * horizonResponse
+            self.tilt = max(-1.15, min(1.15, self.tilt))
+            let angularSpeed = (self.tilt - previousTilt) / deltaTime
+            self.tiltVelocity += (angularSpeed - self.tiltVelocity) * 0.28
+
+            // Hand acceleration excites waves, but never rotates the mean free
+            // surface away from the gravity-defined world horizon.
             let handJolt = motion.userAcceleration.x * 0.018 + motion.userAcceleration.y * 0.008
             let lateralImpulse = max(-0.035, min(0.035, handJolt))
-            self.tiltVelocity += lateralImpulse
-            self.tilt += self.tiltVelocity / 30.0
-            self.tilt = max(-1.15, min(1.15, self.tilt))
-            self.sloshEnergy = min(1.0, max(abs(self.tiltVelocity) * 1.8, abs(lateralImpulse) * 10.0, self.sloshEnergy * 0.94))
-            self.flow = max(-1.0, min(1.0, self.tiltVelocity * 4.0))
+            let decayedEnergy = self.sloshEnergy * exp(-deltaTime * 2.2)
+            self.sloshEnergy = min(1.0, max(abs(angularSpeed) * 0.14, abs(lateralImpulse) * 12.0, decayedEnergy))
+            self.flow = max(-1.0, min(1.0, angularSpeed * 0.12 + lateralImpulse * 6.0))
             // In the cup's front-to-back cross-section, tipping reduces the maximum
             // volume the open top rim can retain. Drain only the amount above that
             // angle-dependent capacity; holding one angle settles at one level.
@@ -504,12 +530,20 @@ private final class MotionManager: ObservableObject {
             let spillThreshold = 0.70
             let emptyAngle = 1.48
             let spillProgress = max(0.0, min(1.0, (spillAngle - spillThreshold) / (emptyAngle - spillThreshold)))
-            let retainedLevel = max(0.06, 0.94 - pow(spillProgress, 1.25) * 0.88)
+            let smoothSpill = spillProgress * spillProgress * (3.0 - 2.0 * spillProgress)
+            let retainedLevel = max(0.06, 0.94 - smoothSpill * 0.88)
             let overflow = max(0.0, self.level - retainedLevel)
             self.isDrinking = overflow > 0.001
+            let targetDrainRate = self.isDrinking
+                ? min(0.26, 0.015 + overflow * 0.28 + spillProgress * 0.035)
+                : 0.0
+            let drainResponse = 1.0 - exp(-deltaTime * (self.isDrinking ? 5.0 : 12.0))
+            self.drainRate += (targetDrainRate - self.drainRate) * drainResponse
             if self.isDrinking {
-                let drainPerFrame = min(0.014, 0.0008 + overflow * 0.12 + spillProgress * 0.004)
-                self.level = max(0.06, self.level - drainPerFrame)
+                let drainedVolume = min(overflow, self.drainRate * deltaTime)
+                self.level = max(0.06, self.level - drainedVolume)
+            } else if self.drainRate < 0.0001 {
+                self.drainRate = 0
             }
         }
     }
