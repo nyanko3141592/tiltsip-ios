@@ -13,7 +13,7 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-            FluidBackdrop(drink: drink, fill: motion.level, tilt: motion.tilt)
+            FluidBackdrop(drink: drink, fill: motion.level, tilt: motion.tilt, energy: motion.sloshEnergy)
             MetalGlassView(drink: drink, fill: motion.level, carbonation: 0.82, tilt: motion.tilt * 180 / .pi, isPouring: false)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             HStack(spacing: 8) {
@@ -38,10 +38,11 @@ private struct FluidBackdrop: View {
     let drink: Drink
     let fill: Double
     let tilt: Double
+    let energy: Double
 
     var body: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
-            FluidCanvas(drink: drink, time: timeline.date.timeIntervalSinceReferenceDate, fill: fill, tilt: tilt)
+            FluidCanvas(drink: drink, time: timeline.date.timeIntervalSinceReferenceDate, fill: fill, tilt: tilt, energy: energy)
         }
     }
 }
@@ -51,6 +52,7 @@ private struct FluidCanvas: View {
     let time: TimeInterval
     let fill: Double
     let tilt: Double
+    let energy: Double
 
     var body: some View {
         Canvas { context, size in
@@ -58,13 +60,14 @@ private struct FluidCanvas: View {
                 // The top edge of the phone is the cup rim. Drinking moves the surface downward.
                 let surface = size.height * (0.08 + CGFloat(1.0 - fill) * 0.80)
                 let slope = CGFloat(max(-0.55, min(0.55, tilt))) * 0.28
+                let waveAmplitude = 4.0 + CGFloat(energy) * 18.0
                 let foamHeight = 8.0 + CGFloat(fill) * 22.0
                 var liquid = Path()
                 liquid.move(to: CGPoint(x: 0, y: surface))
                 for x in stride(from: 0, through: size.width, by: 8) {
                     let normalizedX = Double(x / size.width)
-                    let wave1 = sin(normalizedX * 15.0 + t * 0.9) * 7.0
-                    let wave2 = sin(normalizedX * 31.0 - t * 0.5) * 2.0
+                    let wave1 = sin(normalizedX * 15.0 + t * 0.9) * waveAmplitude
+                    let wave2 = sin(normalizedX * 31.0 - t * 0.5) * waveAmplitude * 0.28
                     let y = surface + CGFloat(wave1 + wave2) + slope * (x - size.width / 2)
                     liquid.addLine(to: CGPoint(x: x, y: y))
                 }
@@ -80,7 +83,7 @@ private struct FluidCanvas: View {
                 var foamBand = Path()
                 foamBand.move(to: CGPoint(x: 0, y: surface - foamHeight - slope * size.width / 2))
                 for x in stride(from: 0, through: size.width, by: 8) {
-                    let y = surface - foamHeight + sin(Double(x / size.width) * 17.0 + t * 0.55) * 3 + slope * (x - size.width / 2)
+                    let y = surface - foamHeight + sin(Double(x / size.width) * 17.0 + t * 0.55) * (3 + CGFloat(energy) * 8) + slope * (x - size.width / 2)
                     foamBand.addLine(to: CGPoint(x: x, y: y))
                 }
                 foamBand.addLine(to: CGPoint(x: size.width, y: surface + 27))
@@ -142,6 +145,7 @@ private struct FluidCanvas: View {
 private final class MotionManager: ObservableObject {
     @Published var tilt: Double = 0
     @Published var level: Double = 0.94
+    @Published var sloshEnergy: Double = 0
     private let manager = CMMotionManager()
     private var tiltVelocity: Double = 0
 
@@ -159,6 +163,7 @@ private final class MotionManager: ObservableObject {
             self.tiltVelocity += springForce / 30.0
             self.tilt += self.tiltVelocity / 30.0
             self.tilt = max(-0.55, min(0.55, self.tilt))
+            self.sloshEnergy = min(1.0, max(abs(self.tiltVelocity) * 1.8, self.sloshEnergy * 0.94))
             if pitch > 0.92 {
                 let sip = min(0.0035, 0.00035 + (pitch - 0.92) * 0.0022)
                 self.level = max(0.06, self.level - sip)
