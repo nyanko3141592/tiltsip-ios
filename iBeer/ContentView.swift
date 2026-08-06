@@ -305,7 +305,7 @@ private struct FluidCanvas: View {
                         let seed = Double(i) * 6.73
                         let x = CGFloat((sin(seed * 2.11) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
                         let y = surface + 11 + CGFloat((sin(seed * 1.8) * 0.5 + 0.5) * 12)
-                        let radius = CGFloat(2.0 + (i % 3))
+                        let radius = CGFloat(2.0 + Double(i % 3))
                         let lace = Path(ellipseIn: CGRect(x: x - radius, y: y - radius * 0.45, width: radius * 2, height: radius * 0.9))
                         context.stroke(lace, with: .color(.white.opacity(0.16)), lineWidth: 0.7)
                     }
