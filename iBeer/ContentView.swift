@@ -1,4 +1,5 @@
 import SwiftUI
+import CoreMotion
 
 enum Drink: String, CaseIterable, Identifiable {
     case beer = "BEER"
@@ -8,11 +9,12 @@ enum Drink: String, CaseIterable, Identifiable {
 
 struct ContentView: View {
     @State private var drink: Drink = .beer
+    @StateObject private var motion = MotionManager()
 
     var body: some View {
         ZStack {
-            FluidBackdrop(drink: drink)
-            MetalGlassView(drink: drink, fill: 0.73, carbonation: 0.82, tilt: 0, isPouring: false)
+            FluidBackdrop(drink: drink, tilt: motion.tilt)
+            MetalGlassView(drink: drink, fill: 0.73, carbonation: 0.82, tilt: motion.tilt * 180 / .pi, isPouring: false)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             HStack(spacing: 8) {
                 Circle().fill(drink == .beer ? Color.orange : Color.red.opacity(0.7)).frame(width: 7, height: 7)
@@ -28,15 +30,17 @@ struct ContentView: View {
         .onTapGesture { drink = drink == .beer ? .cola : .beer }
         .accessibilityLabel("液体シミュレーション。タップでビールとコーラを切り替え")
         .preferredColorScheme(.dark)
+        .task { motion.start() }
     }
 }
 
 private struct FluidBackdrop: View {
     let drink: Drink
+    let tilt: Double
 
     var body: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
-            FluidCanvas(drink: drink, time: timeline.date.timeIntervalSinceReferenceDate)
+            FluidCanvas(drink: drink, time: timeline.date.timeIntervalSinceReferenceDate, tilt: tilt)
         }
     }
 }
@@ -44,18 +48,20 @@ private struct FluidBackdrop: View {
 private struct FluidCanvas: View {
     let drink: Drink
     let time: TimeInterval
+    let tilt: Double
 
     var body: some View {
         Canvas { context, size in
                 let t = time
                 let surface = size.height * 0.32
+                let slope = CGFloat(max(-0.55, min(0.55, tilt))) * 0.28
                 var liquid = Path()
                 liquid.move(to: CGPoint(x: 0, y: surface))
                 for x in stride(from: 0, through: size.width, by: 8) {
                     let normalizedX = Double(x / size.width)
                     let wave1 = sin(normalizedX * 15.0 + t * 0.9) * 7.0
                     let wave2 = sin(normalizedX * 31.0 - t * 0.5) * 2.0
-                    let y = surface + CGFloat(wave1 + wave2)
+                    let y = surface + CGFloat(wave1 + wave2) + slope * (x - size.width / 2)
                     liquid.addLine(to: CGPoint(x: x, y: y))
                 }
                 liquid.addLine(to: CGPoint(x: size.width, y: size.height))
@@ -68,9 +74,9 @@ private struct FluidCanvas: View {
 
                 let foam = beer ? Color(red: 1.0, green: 0.80, blue: 0.46) : Color(red: 0.28, green: 0.08, blue: 0.06)
                 var foamBand = Path()
-                foamBand.move(to: CGPoint(x: 0, y: surface - 17))
+                foamBand.move(to: CGPoint(x: 0, y: surface - 17 - slope * size.width / 2))
                 for x in stride(from: 0, through: size.width, by: 8) {
-                    let y = surface - 17 + sin(Double(x / size.width) * 17.0 + t * 0.55) * 3
+                    let y = surface - 17 + sin(Double(x / size.width) * 17.0 + t * 0.55) * 3 + slope * (x - size.width / 2)
                     foamBand.addLine(to: CGPoint(x: x, y: y))
                 }
                 foamBand.addLine(to: CGPoint(x: size.width, y: surface + 27))
@@ -127,6 +133,25 @@ private struct FluidCanvas: View {
                 }
             }
         }
+}
+
+private final class MotionManager: ObservableObject {
+    @Published var tilt: Double = 0
+    private let manager = CMMotionManager()
+
+    func start() {
+        guard manager.isDeviceMotionAvailable, !manager.isDeviceMotionActive else { return }
+        manager.deviceMotionUpdateInterval = 1.0 / 30.0
+        manager.startDeviceMotionUpdates(using: .xArbitraryZVertical, to: .main) { [weak self] motion, _ in
+            guard let self, let motion else { return }
+            let roll = motion.attitude.roll
+            withAnimation(.interactiveSpring(response: 0.18, dampingFraction: 0.86)) {
+                self.tilt = max(-0.55, min(0.55, roll))
+            }
+        }
+    }
+
+    deinit { manager.stopDeviceMotionUpdates() }
 }
 
 #Preview { ContentView() }
