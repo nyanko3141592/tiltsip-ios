@@ -160,6 +160,21 @@ private struct FluidCanvas: View {
                     context.fill(Path(ellipseIn: CGRect(x: x - r * 0.35, y: y - r * 0.45, width: r * 0.45, height: r * 0.45)), with: .color(.white.opacity(beer ? 0.45 : 0.25)))
                 }
 
+                // Carbonation rises in loose trails rather than as a uniform random field.
+                for lane in 0..<18 {
+                    let seed = Double(lane) * 17.31
+                    let originX = CGFloat((sin(seed) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
+                    for bead in 0..<7 {
+                        let beadPhase = (t * (0.018 + Double(lane % 4) * 0.002) + Double(bead) * 0.11 + seed).truncatingRemainder(dividingBy: 1.0)
+                        let y = size.height - beadPhase * (size.height - surface + 24)
+                        let x = originX + CGFloat(sin(beadPhase * 13.0 + seed) * (4.0 + beadPhase * 16.0)) + CGFloat(flow) * beadPhase * 10
+                        let r = CGFloat(0.8 + Double((lane + bead) % 3) * 0.65)
+                        let beadPath = Path(ellipseIn: CGRect(x: x - r, y: y - r, width: r * 2, height: r * 2))
+                        context.stroke(beadPath, with: .color(.white.opacity(beer ? 0.22 : 0.12)), lineWidth: 0.65)
+                        context.fill(Path(ellipseIn: CGRect(x: x - r * 0.25, y: y - r * 0.35, width: r * 0.32, height: r * 0.32)), with: .color(.white.opacity(beer ? 0.34 : 0.18)))
+                    }
+                }
+
                 context.drawLayer { layer in
                     layer.addFilter(.blur(radius: 8))
                     for band in 0..<5 {
