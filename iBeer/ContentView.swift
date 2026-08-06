@@ -63,7 +63,7 @@ private struct FluidCanvas: View {
                 liquid.closeSubpath()
 
                 let beer = drink == .beer
-                let liquidColors: [Color] = beer ? [Color(red: 1.0, green: 0.58, blue: 0.12), Color(red: 0.42, green: 0.075, blue: 0.006)] : [Color(red: 0.25, green: 0.035, blue: 0.02), Color(red: 0.035, green: 0.004, blue: 0.003)]
+                let liquidColors: [Color] = beer ? [Color(red: 1.0, green: 0.62, blue: 0.16), Color(red: 0.70, green: 0.20, blue: 0.012), Color(red: 0.30, green: 0.045, blue: 0.004)] : [Color(red: 0.25, green: 0.035, blue: 0.02), Color(red: 0.035, green: 0.004, blue: 0.003)]
                 context.fill(liquid, with: .linearGradient(Gradient(colors: liquidColors), startPoint: CGPoint(x: 0, y: surface), endPoint: CGPoint(x: 0, y: size.height)))
 
                 let foam = beer ? Color(red: 1.0, green: 0.80, blue: 0.46) : Color(red: 0.28, green: 0.08, blue: 0.06)
@@ -86,6 +86,14 @@ private struct FluidCanvas: View {
                     context.fill(Path(ellipseIn: CGRect(x: x - radius, y: y - radius * 0.6, width: radius * 2, height: radius * 1.2)), with: .color(foam.opacity(0.22)))
                 }
 
+                for i in 0..<24 {
+                    let seed = Double(i) * 6.417
+                    let x = CGFloat((sin(seed * 2.1) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
+                    let y = surface - 8 + CGFloat((sin(seed * 1.3) * 0.5 + 0.5)) * 28
+                    let radius = CGFloat(2 + (i % 3))
+                    context.fill(Path(ellipseIn: CGRect(x: x - radius, y: y - radius * 0.55, width: radius * 2, height: radius * 1.1)), with: .color(.black.opacity(0.065)))
+                }
+
                 var sheen = Path()
                 sheen.move(to: CGPoint(x: size.width * 0.18, y: surface + 35))
                 sheen.addLine(to: CGPoint(x: size.width * 0.28, y: size.height))
@@ -102,8 +110,20 @@ private struct FluidCanvas: View {
                     let y = size.height - progress * (size.height - surface + 30)
                     let r = CGFloat(1.0 + Double(i % 3))
                     let bubble = Path(ellipseIn: CGRect(x: x - r, y: y - r, width: r * 2, height: r * 2))
+                    context.fill(Path(ellipseIn: CGRect(x: x - r * 1.25, y: y - r * 1.25, width: r * 2.5, height: r * 2.5)), with: .color(.white.opacity(beer ? 0.045 : 0.025)))
                     context.stroke(bubble, with: .color(.white.opacity(beer ? 0.35 : 0.20)), lineWidth: 0.8)
                     context.fill(Path(ellipseIn: CGRect(x: x - r * 0.35, y: y - r * 0.45, width: r * 0.45, height: r * 0.45)), with: .color(.white.opacity(beer ? 0.45 : 0.25)))
+                }
+
+                context.drawLayer { layer in
+                    layer.addFilter(.blur(radius: 8))
+                    for band in 0..<5 {
+                        var caustic = Path()
+                        let y = surface + 90 + CGFloat(band) * size.height * 0.13
+                        caustic.move(to: CGPoint(x: -20, y: y))
+                        caustic.addCurve(to: CGPoint(x: size.width + 20, y: y + 10), control1: CGPoint(x: size.width * 0.28, y: y - 12), control2: CGPoint(x: size.width * 0.72, y: y + 18))
+                        layer.stroke(caustic, with: .color(.white.opacity(beer ? 0.035 : 0.018)), lineWidth: 7)
+                    }
                 }
             }
         }
