@@ -41,17 +41,21 @@ private struct FoamPhotoTexture: View {
     let fill: Double
 
     var body: some View {
-        GeometryReader { proxy in
-            let surface = proxy.size.height * (0.08 + CGFloat(1.0 - fill) * 0.80)
-            let foamHeight = 18.0 + CGFloat(fill) * 42.0
-            Image("FoamTexture")
-                .resizable()
-                .scaledToFill()
-                .frame(width: proxy.size.width, height: foamHeight + 28)
-                .clipped()
-                .opacity(0.16)
-                .blendMode(.screen)
-                .offset(y: surface - foamHeight)
+        TimelineView(.animation(minimumInterval: 1.0 / 20.0)) { timeline in
+            GeometryReader { proxy in
+                let surface = proxy.size.height * (0.08 + CGFloat(1.0 - fill) * 0.80)
+                let foamHeight = 18.0 + CGFloat(fill) * 42.0
+                let shimmer = sin(timeline.date.timeIntervalSinceReferenceDate * 0.72) * 0.018
+                let drift = CGFloat(sin(timeline.date.timeIntervalSinceReferenceDate * 0.31) * 1.2)
+                Image("FoamTexture")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: proxy.size.width, height: foamHeight + 28)
+                    .clipped()
+                    .opacity(0.145 + shimmer)
+                    .blendMode(.screen)
+                    .offset(x: drift, y: surface - foamHeight)
+            }
         }
         .allowsHitTesting(false)
     }
@@ -255,6 +259,24 @@ private struct FluidCanvas: View {
                         let beadPath = Path(ellipseIn: CGRect(x: x - r, y: y - r, width: r * 2, height: r * 2))
                         context.stroke(beadPath, with: .color(.white.opacity(beer ? 0.22 : 0.12)), lineWidth: 0.65)
                         context.fill(Path(ellipseIn: CGRect(x: x - r * 0.25, y: y - r * 0.35, width: r * 0.32, height: r * 0.32)), with: .color(.white.opacity(beer ? 0.34 : 0.18)))
+                    }
+                }
+
+                // Foreground bubbles are larger and softer than the distant carbonation,
+                // giving the liquid a real near/far depth cue.
+                context.drawLayer { layer in
+                    layer.addFilter(.blur(radius: 1.2))
+                    for i in 0..<18 {
+                        let seed = Double(i) * 23.71
+                        let depth = (sin(seed * 1.13) * 0.5 + 0.5)
+                        let x = CGFloat((sin(seed * 1.9) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
+                        let rise = (t * (0.006 + depth * 0.006) + seed).truncatingRemainder(dividingBy: 1.0)
+                        let y = size.height - rise * (size.height - surface + 18)
+                        let r = CGFloat(2.2 + depth * 3.0)
+                        let glow = Path(ellipseIn: CGRect(x: x - r * 1.5, y: y - r * 1.5, width: r * 3, height: r * 3))
+                        layer.fill(glow, with: .color(.white.opacity(beer ? 0.025 + depth * 0.03 : 0.012)))
+                        let ring = Path(ellipseIn: CGRect(x: x - r, y: y - r * 0.78, width: r * 2, height: r * 1.56))
+                        layer.stroke(ring, with: .color(.white.opacity(beer ? 0.20 + depth * 0.16 : 0.10)), lineWidth: 1.0 + depth * 0.35)
                     }
                 }
 
