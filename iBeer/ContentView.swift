@@ -532,10 +532,11 @@ private final class MotionManager: ObservableObject {
             let rawDelta = lastMotionTimestamp.map { motion.timestamp - $0 } ?? (1.0 / 30.0)
             let deltaTime = max(1.0 / 120.0, min(1.0 / 15.0, rawDelta))
             lastMotionTimestamp = motion.timestamp
-            // A free surface is perpendicular to gravity. Project gravity onto the
-            // display plane and derive the screen-space world horizon directly.
-            let worldHorizon = atan2(-gravity.x, -gravity.y)
-            let targetTilt = max(-1.15, min(1.15, worldHorizon))
+            // This is a side-view glass: only the screen's left/right edge may tilt.
+            // gravity.x is the vertical component of that edge, so asin gives its
+            // world-space angle without letting front/back pitch (y/z) rotate it.
+            let lateralTilt = asin(max(-1.0, min(1.0, -gravity.x)))
+            let targetTilt = max(-1.15, min(1.15, lateralTilt))
             let previousTilt = self.tilt
             let horizonResponse = 1.0 - exp(-deltaTime * 16.0)
             self.tilt += (targetTilt - self.tilt) * horizonResponse
@@ -550,10 +551,9 @@ private final class MotionManager: ObservableObject {
             let decayedEnergy = self.sloshEnergy * exp(-deltaTime * 2.2)
             self.sloshEnergy = min(1.0, max(abs(angularSpeed) * 0.14, abs(lateralImpulse) * 12.0, decayedEnergy))
             self.flow = max(-1.0, min(1.0, angularSpeed * 0.12 + lateralImpulse * 6.0))
-            // In the cup's front-to-back cross-section, tipping reduces the maximum
-            // volume the open top rim can retain. Drain only the amount above that
-            // angle-dependent capacity; holding one angle settles at one level.
-            let spillAngle = atan2(abs(gravity.z), max(0.001, -gravity.y))
+            // The visible left/right rim is the only spill edge in this side-view
+            // simulation. Front/back pitch is deliberately ignored here as well.
+            let spillAngle = abs(lateralTilt)
             let spillThreshold = 0.70
             let emptyAngle = 1.48
             let spillProgress = max(0.0, min(1.0, (spillAngle - spillThreshold) / (emptyAngle - spillThreshold)))
