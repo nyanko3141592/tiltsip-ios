@@ -55,6 +55,7 @@ private struct FoamPhotoTexture: View {
                     .clipped()
                     .opacity(0.145 + shimmer)
                     .blendMode(.screen)
+                    .rotationEffect(.radians(tilt * 0.18), anchor: .center)
                     .offset(x: drift + CGFloat(tilt) * 22.0, y: surface - foamHeight)
             }
         }
