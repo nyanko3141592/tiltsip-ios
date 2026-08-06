@@ -326,8 +326,9 @@ private struct FluidCanvas: View {
                 }
 
                 var sheen = Path()
-                sheen.move(to: CGPoint(x: size.width * 0.18, y: surface + 35))
-                sheen.addLine(to: CGPoint(x: size.width * 0.28, y: size.height))
+                let sheenDrift = CGFloat(flow) * size.width * 0.045
+                sheen.move(to: CGPoint(x: size.width * 0.18 + sheenDrift, y: surface + 35))
+                sheen.addLine(to: CGPoint(x: size.width * 0.28 + sheenDrift, y: size.height))
                 context.drawLayer { layer in
                     layer.addFilter(.blur(radius: 13))
                     layer.stroke(sheen, with: .color(.white.opacity(beer ? 0.16 : 0.07)), lineWidth: 22)
