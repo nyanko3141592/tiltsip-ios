@@ -349,6 +349,20 @@ private struct FluidCanvas: View {
                     context.fill(Path(ellipseIn: CGRect(x: x - r, y: y - r, width: r * 2, height: r * 2)), with: .color(.white.opacity(beer ? 0.16 : 0.07)))
                 }
 
+                context.drawLayer { layer in
+                    layer.addFilter(.blur(radius: 1.8))
+                    for i in 0..<8 {
+                        let seed = Double(i) * 19.17
+                        let x = CGFloat((sin(seed * 2.8) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
+                        let rise = (t * 0.014 + seed).truncatingRemainder(dividingBy: 1.0)
+                        let y = size.height - rise * (size.height - surface + 20)
+                        var wakeTrail = Path()
+                        wakeTrail.move(to: CGPoint(x: x, y: y + 10))
+                        wakeTrail.addCurve(to: CGPoint(x: x + CGFloat(flow) * 7, y: y - 8), control1: CGPoint(x: x - 3, y: y + 3), control2: CGPoint(x: x + 5, y: y - 2))
+                        layer.stroke(wakeTrail, with: .color(.white.opacity(beer ? 0.035 : 0.015)), lineWidth: 2.0)
+                    }
+                }
+
                 // Carbonation rises in loose trails rather than as a uniform random field.
                 for lane in 0..<18 {
                     let seed = Double(lane) * 17.31
