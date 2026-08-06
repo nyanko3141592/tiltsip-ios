@@ -45,7 +45,9 @@ private struct FoamPhotoTexture: View {
     var body: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 20.0)) { timeline in
             GeometryReader { proxy in
-                let surface = proxy.size.height * (0.08 + CGFloat(1.0 - fill) * 0.80)
+                let surfaceAngle = max(-1.15, min(1.15, tilt))
+                let slope = CGFloat(tan(surfaceAngle))
+                let surface = conservedSurfaceCenter(size: proxy.size, fill: fill, slope: slope)
                 let foamHeight = 14.0 + CGFloat(fill) * 46.0
                 let shimmer = sin(timeline.date.timeIntervalSinceReferenceDate * 0.72) * 0.018
                 let drift = CGFloat(sin(timeline.date.timeIntervalSinceReferenceDate * 0.31) * 1.2)
