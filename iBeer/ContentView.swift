@@ -91,7 +91,7 @@ private struct FluidCanvas: View {
                 let surface = size.height * (0.08 + CGFloat(1.0 - fill) * 0.80)
                 let slope = CGFloat(max(-0.55, min(0.55, tilt))) * 0.28
                 let waveAmplitude = 4.0 + CGFloat(energy) * 18.0
-                let foamHeight = 18.0 + CGFloat(fill) * 42.0
+                let foamHeight = 14.0 + CGFloat(fill) * 46.0
                 var liquid = Path()
                 liquid.move(to: CGPoint(x: 0, y: surface))
                 for x in stride(from: 0, through: size.width, by: 8) {
