@@ -13,8 +13,8 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-            FluidBackdrop(drink: drink, tilt: motion.tilt)
-            MetalGlassView(drink: drink, fill: 0.73, carbonation: 0.82, tilt: motion.tilt * 180 / .pi, isPouring: false)
+            FluidBackdrop(drink: drink, fill: motion.level, tilt: motion.tilt)
+            MetalGlassView(drink: drink, fill: motion.level, carbonation: 0.82, tilt: motion.tilt * 180 / .pi, isPouring: false)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             HStack(spacing: 8) {
                 Circle().fill(drink == .beer ? Color.orange : Color.red.opacity(0.7)).frame(width: 7, height: 7)
@@ -36,11 +36,12 @@ struct ContentView: View {
 
 private struct FluidBackdrop: View {
     let drink: Drink
+    let fill: Double
     let tilt: Double
 
     var body: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
-            FluidCanvas(drink: drink, time: timeline.date.timeIntervalSinceReferenceDate, tilt: tilt)
+            FluidCanvas(drink: drink, time: timeline.date.timeIntervalSinceReferenceDate, fill: fill, tilt: tilt)
         }
     }
 }
@@ -48,12 +49,13 @@ private struct FluidBackdrop: View {
 private struct FluidCanvas: View {
     let drink: Drink
     let time: TimeInterval
+    let fill: Double
     let tilt: Double
 
     var body: some View {
         Canvas { context, size in
                 let t = time
-                let surface = size.height * 0.32
+                let surface = size.height * (0.84 - CGFloat(fill) * 0.71)
                 let slope = CGFloat(max(-0.55, min(0.55, tilt))) * 0.28
                 var liquid = Path()
                 liquid.move(to: CGPoint(x: 0, y: surface))
@@ -137,6 +139,7 @@ private struct FluidCanvas: View {
 
 private final class MotionManager: ObservableObject {
     @Published var tilt: Double = 0
+    @Published var level: Double = 0.73
     private let manager = CMMotionManager()
 
     func start() {
@@ -145,8 +148,13 @@ private final class MotionManager: ObservableObject {
         manager.startDeviceMotionUpdates(using: .xArbitraryZVertical, to: .main) { [weak self] motion, _ in
             guard let self, let motion else { return }
             let roll = motion.attitude.roll
+            let pitch = abs(motion.attitude.pitch)
             withAnimation(.interactiveSpring(response: 0.18, dampingFraction: 0.86)) {
                 self.tilt = max(-0.55, min(0.55, roll))
+            }
+            if pitch > 0.92 {
+                let sip = min(0.0035, 0.00035 + (pitch - 0.92) * 0.0022)
+                self.level = max(0.06, self.level - sip)
             }
         }
     }
