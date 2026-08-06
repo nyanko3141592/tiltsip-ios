@@ -329,6 +329,16 @@ private struct FluidCanvas: View {
                     context.fill(Path(ellipseIn: CGRect(x: x - r * 0.35, y: y - r * 0.45, width: r * 0.45, height: r * 0.45)), with: .color(.white.opacity(beer ? 0.45 : 0.25)))
                 }
 
+                // Fine carbonation dust fills the spaces between the larger bubbles.
+                for i in 0..<52 {
+                    let seed = Double(i) * 3.173
+                    let x = CGFloat((sin(seed * 3.7) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
+                    let progress = (t * (0.010 + Double(i % 4) * 0.002) + seed).truncatingRemainder(dividingBy: 1.0)
+                    let y = size.height - progress * (size.height - surface + 20)
+                    let r = CGFloat(0.35 + Double(i % 3) * 0.22)
+                    context.fill(Path(ellipseIn: CGRect(x: x - r, y: y - r, width: r * 2, height: r * 2)), with: .color(.white.opacity(beer ? 0.16 : 0.07)))
+                }
+
                 // Carbonation rises in loose trails rather than as a uniform random field.
                 for lane in 0..<18 {
                     let seed = Double(lane) * 17.31
