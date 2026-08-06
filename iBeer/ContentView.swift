@@ -11,11 +11,10 @@ enum Drink: String, CaseIterable, Identifiable {
 
 struct ContentView: View {
     @State private var drink: Drink = .beer
-    @State private var fill: Double = 0.76
-    @State private var carbonation: Double = 0.68
-    @State private var tilt: Double = 0
-    @State private var isPouring = true
-    @State private var dragStartTilt: Double?
+    private let fill = 1.0
+    private let carbonation = 0.72
+    private let tilt = 0.0
+    private let isPouring = false
 
     var body: some View {
         ZStack {
@@ -24,16 +23,13 @@ struct ContentView: View {
 
             VStack(spacing: 0) {
                 header
-                Spacer(minLength: 12)
+                Spacer(minLength: 8)
                 ZStack {
                     GlassShape(fill: fill, drink: drink, tilt: tilt)
                     MetalGlassView(drink: drink, fill: fill, carbonation: carbonation, tilt: tilt, isPouring: isPouring)
                 }
-                    .frame(maxWidth: .infinity, maxHeight: 460)
-                    .contentShape(Rectangle())
-                    .gesture(tiltGesture)
-                    .onTapGesture { withAnimation(.spring(response: 0.35)) { isPouring.toggle() } }
-                Spacer(minLength: 8)
+                    .frame(maxWidth: .infinity, maxHeight: 500)
+                Spacer(minLength: 14)
                 controls
             }
             .padding(.horizontal, 20)
@@ -46,12 +42,9 @@ struct ContentView: View {
         HStack(alignment: .center) {
             VStack(alignment: .leading, spacing: 3) {
                 Text("iBeer").font(.system(size: 34, weight: .black, design: .rounded))
-                Text(isPouring ? "注いでいます…" : "タップして注ぐ").font(.subheadline.weight(.medium)).foregroundStyle(.white.opacity(0.55))
+                Text("満杯のコップ").font(.subheadline.weight(.medium)).foregroundStyle(.white.opacity(0.55))
             }
             Spacer()
-            Button { withAnimation(.spring) { fill = 0.04; isPouring = false } } label: {
-                Image(systemName: "arrow.counterclockwise").font(.headline).frame(width: 42, height: 42).background(.white.opacity(0.10), in: Circle())
-            }.accessibilityLabel("リセット")
         }
     }
 
@@ -60,42 +53,9 @@ struct ContentView: View {
             Picker("ドリンク", selection: $drink) {
                 ForEach(Drink.allCases) { item in Text("\(item.symbol)  \(item.rawValue)").tag(item) }
             }.pickerStyle(.segmented).accessibilityIdentifier("drinkPicker")
-
-            VStack(spacing: 10) {
-                sliderRow(title: "注ぐ量", value: $fill, range: 0.08...1.0, icon: "drop.fill")
-                sliderRow(title: "炭酸", value: $carbonation, range: 0...1, icon: "sparkles")
-            }
-
-            Button {
-                withAnimation(.spring(response: 0.3)) { isPouring.toggle() }
-            } label: {
-                Label(isPouring ? "注ぐのを止める" : "注ぐ", systemImage: isPouring ? "pause.fill" : "play.fill")
-                    .font(.headline).frame(maxWidth: .infinity).padding(.vertical, 14)
-                    .background(drink.tint.gradient, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
-            }
-            .foregroundStyle(.white)
-            .accessibilityIdentifier("pourButton")
-            Text("グラスを左右にドラッグして傾けられます").font(.caption).foregroundStyle(.white.opacity(0.42))
+            Text("コップを置いて、好きな飲み物を選べます").font(.caption).foregroundStyle(.white.opacity(0.42))
         }
         .padding(.bottom, 8)
-    }
-
-    private func sliderRow(title: String, value: Binding<Double>, range: ClosedRange<Double>, icon: String) -> some View {
-        HStack(spacing: 12) {
-            Image(systemName: icon).foregroundStyle(drink.secondary).frame(width: 20)
-            Text(title).font(.subheadline.weight(.semibold)).frame(width: 54, alignment: .leading)
-            Slider(value: value, in: range).tint(drink.secondary)
-            Text("\(Int(value.wrappedValue * 100))%").font(.caption.monospacedDigit()).foregroundStyle(.white.opacity(0.55)).frame(width: 38, alignment: .trailing)
-        }
-    }
-
-    private var tiltGesture: some Gesture {
-        DragGesture(minimumDistance: 5)
-            .onChanged { gesture in
-                if dragStartTilt == nil { dragStartTilt = tilt }
-                tilt = min(18, max(-18, (dragStartTilt ?? 0) + gesture.translation.width / 8))
-            }
-            .onEnded { _ in dragStartTilt = nil }
     }
 }
 
