@@ -7,7 +7,7 @@ settings:
   base:
     SWIFT_VERSION: "5.0"
     TARGETED_DEVICE_FAMILY: "1"
-    DEVELOPMENT_TEAM: ""
+    DEVELOPMENT_TEAM: Y78K46YQ9U
 targets:
   WaterSim:
     type: application
