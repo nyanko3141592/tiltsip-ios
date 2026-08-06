@@ -7,125 +7,125 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		08965EA00050C553C6447051 /* MetalGlassView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAB5510916111AA69D9F7B /* MetalGlassView.swift */; };
-		5607C96C312736411E6695B4 /* Fluid.metal in Sources */ = {isa = PBXBuildFile; fileRef = A4B236CA1A56FF7D599E9525 /* Fluid.metal */; };
-		83945872B91D8B5E7411B8E2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B968DA880B279B5040508E /* ContentView.swift */; };
-		C782343287BFB54DAD7CFA73 /* iBeerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53E43F5E5947A717EE1E103F /* iBeerApp.swift */; };
+		B425C612B328B822D0F6A1B7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2EDA747E328689A49233643 /* ContentView.swift */; };
+		B9A5DF236C79CC5D66EFFA59 /* MetalGlassView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC55DB52EBC55A4AD023531C /* MetalGlassView.swift */; };
+		BF90921A693D79DE1F13E770 /* Fluid.metal in Sources */ = {isa = PBXBuildFile; fileRef = B35E489FD6C777975AE393FA /* Fluid.metal */; };
+		D15C073B8D9CE4366D164F87 /* iBeerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DADA64337F380811B52EE5CA /* iBeerApp.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		45B968DA880B279B5040508E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		53E43F5E5947A717EE1E103F /* iBeerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iBeerApp.swift; sourceTree = "<group>"; };
-		A4B236CA1A56FF7D599E9525 /* Fluid.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Fluid.metal; sourceTree = "<group>"; };
-		AAAAB5510916111AA69D9F7B /* MetalGlassView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalGlassView.swift; sourceTree = "<group>"; };
-		B473654198F509C256437E72 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		F3A73E2697AC96F417D8F10B /* iBeer.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = iBeer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9E209C91024919CAEA67D9AF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		B35E489FD6C777975AE393FA /* Fluid.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Fluid.metal; sourceTree = "<group>"; };
+		CC55DB52EBC55A4AD023531C /* MetalGlassView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalGlassView.swift; sourceTree = "<group>"; };
+		D2EDA747E328689A49233643 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		DADA64337F380811B52EE5CA /* iBeerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iBeerApp.swift; sourceTree = "<group>"; };
+		FDCBAC2D57AA8E535DC25BD1 /* WaterSim.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = WaterSim.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
-		3E4DDE68B19B721B57B79EE0 /* iBeer */ = {
+		00CDC98B455D2690D847672B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				45B968DA880B279B5040508E /* ContentView.swift */,
-				A4B236CA1A56FF7D599E9525 /* Fluid.metal */,
-				53E43F5E5947A717EE1E103F /* iBeerApp.swift */,
-				B473654198F509C256437E72 /* Info.plist */,
-				AAAAB5510916111AA69D9F7B /* MetalGlassView.swift */,
-			);
-			path = iBeer;
-			sourceTree = "<group>";
-		};
-		8EE3C420E2D4910E944F2C48 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				F3A73E2697AC96F417D8F10B /* iBeer.app */,
+				FDCBAC2D57AA8E535DC25BD1 /* WaterSim.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		B4C9B80B4E5411F489DFB7E9 = {
+		6F70BA3EA5B6172996624F0B = {
 			isa = PBXGroup;
 			children = (
-				3E4DDE68B19B721B57B79EE0 /* iBeer */,
-				8EE3C420E2D4910E944F2C48 /* Products */,
+				9D18961F0BE25D84267DBD73 /* iBeer */,
+				00CDC98B455D2690D847672B /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		9D18961F0BE25D84267DBD73 /* iBeer */ = {
+			isa = PBXGroup;
+			children = (
+				D2EDA747E328689A49233643 /* ContentView.swift */,
+				B35E489FD6C777975AE393FA /* Fluid.metal */,
+				DADA64337F380811B52EE5CA /* iBeerApp.swift */,
+				9E209C91024919CAEA67D9AF /* Info.plist */,
+				CC55DB52EBC55A4AD023531C /* MetalGlassView.swift */,
+			);
+			path = iBeer;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A2342229A07AF7FC7E01837B /* iBeer */ = {
+		7B1FCB07ED5484745734806C /* WaterSim */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9974ABE5652BF83C630081F4 /* Build configuration list for PBXNativeTarget "iBeer" */;
+			buildConfigurationList = 6EB2BF0FB37D344523E03850 /* Build configuration list for PBXNativeTarget "WaterSim" */;
 			buildPhases = (
-				B151B3B7E7D7E2A3D4354B48 /* Sources */,
+				0A676F223F81072ACD13B04A /* Sources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = iBeer;
+			name = WaterSim;
 			packageProductDependencies = (
 			);
-			productName = iBeer;
-			productReference = F3A73E2697AC96F417D8F10B /* iBeer.app */;
+			productName = WaterSim;
+			productReference = FDCBAC2D57AA8E535DC25BD1 /* WaterSim.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		13B3862070ACDD0F9BDE2C07 /* Project object */ = {
+		F3F09E46D2348B02E4AF74E9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
-					A2342229A07AF7FC7E01837B = {
+					7B1FCB07ED5484745734806C = {
 						DevelopmentTeam = "";
 					};
 				};
 			};
-			buildConfigurationList = 304FC9926C3A31E6A29316F9 /* Build configuration list for PBXProject "iBeer" */;
+			buildConfigurationList = 07E83E166F7C35AF01548E77 /* Build configuration list for PBXProject "WaterSim" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				Base,
 				en,
 			);
-			mainGroup = B4C9B80B4E5411F489DFB7E9;
+			mainGroup = 6F70BA3EA5B6172996624F0B;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 8EE3C420E2D4910E944F2C48 /* Products */;
+			productRefGroup = 00CDC98B455D2690D847672B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A2342229A07AF7FC7E01837B /* iBeer */,
+				7B1FCB07ED5484745734806C /* WaterSim */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		B151B3B7E7D7E2A3D4354B48 /* Sources */ = {
+		0A676F223F81072ACD13B04A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				83945872B91D8B5E7411B8E2 /* ContentView.swift in Sources */,
-				5607C96C312736411E6695B4 /* Fluid.metal in Sources */,
-				08965EA00050C553C6447051 /* MetalGlassView.swift in Sources */,
-				C782343287BFB54DAD7CFA73 /* iBeerApp.swift in Sources */,
+				B425C612B328B822D0F6A1B7 /* ContentView.swift in Sources */,
+				BF90921A693D79DE1F13E770 /* Fluid.metal in Sources */,
+				B9A5DF236C79CC5D66EFFA59 /* MetalGlassView.swift in Sources */,
+				D15C073B8D9CE4366D164F87 /* iBeerApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		70AC4F52FFB460485F3EF575 /* Debug */ = {
+		136E7CC9DD16947A191FFA4C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = iBeer/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = iBeer;
+				INFOPLIST_KEY_CFBundleDisplayName = "Water Sim";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
@@ -133,14 +133,93 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.naoki.iBeer;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.naoki.water-sim";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		7160FEAE0E21C8A7B03D7883 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		A569E59019E71BA1ABAAB8F3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = iBeer/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Water Sim";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
+				INFOPLIST_KEY_UIRequiresFullScreen = YES;
+				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.naoki.water-sim";
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
-		7CDCF9300E42F9F4036BF505 /* Debug */ = {
+		B384F008DF3522CF3324B77C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -205,107 +284,28 @@
 			};
 			name = Debug;
 		};
-		A37210A5875E44D95C33B049 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				INFOPLIST_FILE = iBeer/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = iBeer;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
-				INFOPLIST_KEY_UIRequiresFullScreen = YES;
-				INFOPLIST_KEY_UIStatusBarStyle = UIStatusBarStyleLightContent;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.naoki.iBeer;
-				SDKROOT = iphoneos;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		CF97CB34A6FB5703CCC66924 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		304FC9926C3A31E6A29316F9 /* Build configuration list for PBXProject "iBeer" */ = {
+		07E83E166F7C35AF01548E77 /* Build configuration list for PBXProject "WaterSim" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7CDCF9300E42F9F4036BF505 /* Debug */,
-				CF97CB34A6FB5703CCC66924 /* Release */,
+				B384F008DF3522CF3324B77C /* Debug */,
+				7160FEAE0E21C8A7B03D7883 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		9974ABE5652BF83C630081F4 /* Build configuration list for PBXNativeTarget "iBeer" */ = {
+		6EB2BF0FB37D344523E03850 /* Build configuration list for PBXNativeTarget "WaterSim" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				70AC4F52FFB460485F3EF575 /* Debug */,
-				A37210A5875E44D95C33B049 /* Release */,
+				A569E59019E71BA1ABAAB8F3 /* Debug */,
+				136E7CC9DD16947A191FFA4C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 13B3862070ACDD0F9BDE2C07 /* Project object */;
+	rootObject = F3F09E46D2348B02E4AF74E9 /* Project object */;
 }

@@ -1,4 +1,4 @@
-name: iBeer
+name: WaterSim
 options:
   bundleIdPrefix: com.naoki
   deploymentTarget:
@@ -9,15 +9,15 @@ settings:
     TARGETED_DEVICE_FAMILY: "1"
     DEVELOPMENT_TEAM: ""
 targets:
-  iBeer:
+  WaterSim:
     type: application
     platform: iOS
     sources:
       - path: iBeer
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.naoki.iBeer
-        INFOPLIST_KEY_CFBundleDisplayName: iBeer
+        PRODUCT_BUNDLE_IDENTIFIER: com.naoki.water-sim
+        INFOPLIST_KEY_CFBundleDisplayName: Water Sim
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.entertainment
         INFOPLIST_KEY_UIStatusBarStyle: UIStatusBarStyleLightContent
         INFOPLIST_KEY_UIRequiresFullScreen: YES
@@ -27,4 +27,3 @@ targets:
       path: iBeer/Info.plist
       properties:
         UILaunchScreen: {}
-
