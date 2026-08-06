@@ -85,6 +85,10 @@ struct MetalGlassView: UIViewRepresentable {
             if let encoder = command.makeRenderCommandEncoder(descriptor: pass) {
                 encoder.setRenderPipelineState(surface)
                 encoder.setVertexBuffer(uniform, offset: 0, index: 0)
+                // Vertex and fragment stages have independent argument tables.
+                // Bind the uniforms explicitly for the surface fragment on device;
+                // Metal validation otherwise reports a missing buffer(0) and aborts.
+                encoder.setFragmentBuffer(uniform, offset: 0, index: 0)
                 encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 6)
                 encoder.endEncoding()
             }
