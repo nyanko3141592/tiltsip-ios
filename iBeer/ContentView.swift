@@ -137,7 +137,7 @@ private struct FluidCanvas: View {
                         layer.addFilter(.blur(radius: 18))
                         for beam in 0..<4 {
                             let phase = t * (0.10 + Double(beam) * 0.015) + Double(beam) * 1.8
-                            let x = size.width * (0.10 + CGFloat(beam) * 0.25) + CGFloat(sin(phase) * 18)
+                            let x = size.width * (0.10 + CGFloat(beam) * 0.25) + CGFloat(sin(phase) * 18) + CGFloat(tilt) * size.width * 0.08
                             var lightShaft = Path()
                             lightShaft.move(to: CGPoint(x: x, y: surface + 28))
                             lightShaft.addLine(to: CGPoint(x: x + size.width * 0.15, y: size.height + 28))
