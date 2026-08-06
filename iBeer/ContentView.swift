@@ -437,6 +437,7 @@ private final class MotionManager: ObservableObject {
     @Published var level: Double = 0.94
     @Published var sloshEnergy: Double = 0
     @Published var flow: Double = 0
+    @Published var isDrinking = false
     private let manager = CMMotionManager()
     private var tiltVelocity: Double = 0
 
@@ -462,11 +463,17 @@ private final class MotionManager: ObservableObject {
             self.tilt = max(-0.55, min(0.55, self.tilt))
             self.sloshEnergy = min(1.0, max(abs(self.tiltVelocity) * 1.8, abs(lateralImpulse) * 10.0, self.sloshEnergy * 0.94))
             self.flow = max(-1.0, min(1.0, self.tiltVelocity * 4.0))
-            // Only the mouth-facing direction drains from the phone's top edge.
+            // Treat the phone's top edge as the cup rim. When that rim is tilted
+            // toward the mouth, liquid spills continuously over the top edge.
+            // The drain rate is angle-proportional, so a gentle sip is slow and a
+            // fully tipped phone empties like a joke glass.
             let drinkingPitch = -signedPitch
-            if drinkingPitch > 0.92 {
-                let sip = min(0.006, 0.00075 + (drinkingPitch - 0.92) * 0.004)
-                self.level = max(0.06, self.level - sip)
+            let drinkingThreshold = 0.82
+            self.isDrinking = drinkingPitch > drinkingThreshold && self.level > 0.06
+            if self.isDrinking {
+                let mouthAngle = drinkingPitch - drinkingThreshold
+                let drainPerFrame = min(0.012, 0.0018 + mouthAngle * 0.008)
+                self.level = max(0.06, self.level - drainPerFrame)
             }
         }
     }
