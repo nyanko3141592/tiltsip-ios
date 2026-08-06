@@ -155,6 +155,14 @@ private struct FluidCanvas: View {
                     layer.addFilter(.blur(radius: 16))
                     layer.fill(depthHaze, with: .linearGradient(Gradient(colors: [.clear, .black.opacity(beer ? 0.10 : 0.17)]), startPoint: CGPoint(x: 0, y: size.height - 170), endPoint: CGPoint(x: 0, y: size.height)))
                 }
+                var bottomRoll = Path()
+                bottomRoll.move(to: CGPoint(x: -20, y: size.height - 86))
+                bottomRoll.addCurve(to: CGPoint(x: size.width + 20, y: size.height - 100), control1: CGPoint(x: size.width * 0.24, y: size.height - 126 + CGFloat(flow) * 10), control2: CGPoint(x: size.width * 0.72, y: size.height - 62 - CGFloat(flow) * 8))
+                context.drawLayer { layer in
+                    layer.clip(to: liquid)
+                    layer.addFilter(.blur(radius: 20))
+                    layer.stroke(bottomRoll, with: .color(.black.opacity(beer ? 0.07 : 0.12)), lineWidth: 26)
+                }
 
                 // The phone edges act like the inside wall of a glass: a faint meniscus
                 // and side falloff make the liquid feel curved instead of painted flat.
