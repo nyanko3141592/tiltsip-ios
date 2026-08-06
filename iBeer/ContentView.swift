@@ -56,7 +56,7 @@ private struct FoamPhotoTexture: View {
                     .clipped()
                     .opacity(0.145 + shimmer + energy * 0.018)
                     .blendMode(.screen)
-                    .rotationEffect(.radians(tilt * 0.18), anchor: .center)
+                    .rotationEffect(.radians(tilt), anchor: .center)
                     .offset(x: drift + CGFloat(tilt) * 22.0, y: surface - foamHeight)
             }
         }
@@ -89,9 +89,12 @@ private struct FluidCanvas: View {
     var body: some View {
         Canvas { context, size in
                 let t = time
-                // The top edge of the phone is the cup rim. Drinking moves the surface downward.
-                let surface = size.height * (0.08 + CGFloat(1.0 - fill) * 0.80)
-                let slope = CGFloat(max(-0.55, min(0.55, tilt))) * 0.28
+                // The free surface stays horizontal in world space. Core Motion gives
+                // us that horizon angle; solve the intercept so rotating the line does
+                // not magically create or destroy liquid area inside the phone-cup.
+                let surfaceAngle = max(-1.15, min(1.15, tilt))
+                let slope = CGFloat(tan(surfaceAngle))
+                let surface = conservedSurfaceCenter(size: size, fill: fill, slope: slope)
                 let waveAmplitude = 4.0 + CGFloat(energy) * 18.0
                 let foamHeight = 14.0 + CGFloat(fill) * 46.0
                 var liquid = Path()
@@ -429,7 +432,37 @@ private struct FluidCanvas: View {
                     layer.stroke(coverGlare, with: .color(.white.opacity(beer ? 0.028 : 0.012)), lineWidth: 30)
                 }
             }
+    }
+}
+
+/// Finds the vertical intercept of a world-horizontal free surface while
+/// preserving the visible 2D liquid area in the rectangular phone-cup.
+private func conservedSurfaceCenter(size: CGSize, fill: Double, slope: CGFloat) -> CGFloat {
+    let targetFraction = CGFloat(max(0.0, min(1.0, 0.12 + fill * 0.80)))
+    let samples = 48
+
+    func liquidFraction(center: CGFloat) -> CGFloat {
+        var sum: CGFloat = 0
+        for index in 0..<samples {
+            let x = (CGFloat(index) + 0.5) / CGFloat(samples) * size.width
+            let lineY = center + slope * (x - size.width * 0.5)
+            let clippedY = max(0, min(size.height, lineY))
+            sum += (size.height - clippedY) / size.height
         }
+        return sum / CGFloat(samples)
+    }
+
+    var low = -size.height * 2
+    var high = size.height * 3
+    for _ in 0..<18 {
+        let middle = (low + high) * 0.5
+        if liquidFraction(center: middle) > targetFraction {
+            low = middle
+        } else {
+            high = middle
+        }
+    }
+    return (low + high) * 0.5
 }
 
 private final class MotionManager: ObservableObject {
@@ -446,12 +479,11 @@ private final class MotionManager: ObservableObject {
         manager.deviceMotionUpdateInterval = 1.0 / 30.0
         manager.startDeviceMotionUpdates(using: .xArbitraryZVertical, to: .main) { [weak self] motion, _ in
             guard let self, let motion else { return }
-            let roll = motion.attitude.roll
-            let signedPitch = motion.attitude.pitch
-            // Core Motion's positive direction is opposite to the visible liquid slope
-            // for this portrait cup, so invert the combined tilt before driving the fluid.
-            let forwardTilt = sin(signedPitch) * 0.62
-            let targetTilt = max(-0.55, min(0.55, -(roll + forwardTilt)))
+            let gravity = motion.gravity
+            // A free surface is perpendicular to gravity. Project gravity onto the
+            // display plane and derive the screen-space world horizon directly.
+            let worldHorizon = atan2(-gravity.x, -gravity.y)
+            let targetTilt = max(-1.15, min(1.15, worldHorizon))
             let springForce = (targetTilt - self.tilt) * 13.0 - self.tiltVelocity * 3.8
             self.tiltVelocity += springForce / 30.0
             // A real glass reacts to a quick hand movement before its angle settles.
@@ -460,22 +492,21 @@ private final class MotionManager: ObservableObject {
             let lateralImpulse = max(-0.035, min(0.035, handJolt))
             self.tiltVelocity += lateralImpulse
             self.tilt += self.tiltVelocity / 30.0
-            self.tilt = max(-0.55, min(0.55, self.tilt))
+            self.tilt = max(-1.15, min(1.15, self.tilt))
             self.sloshEnergy = min(1.0, max(abs(self.tiltVelocity) * 1.8, abs(lateralImpulse) * 10.0, self.sloshEnergy * 0.94))
             self.flow = max(-1.0, min(1.0, self.tiltVelocity * 4.0))
-            // Treat the phone's top edge as the cup rim. When that rim is tilted
-            // toward the mouth, liquid spills continuously over the top edge.
-            // The drain rate is angle-proportional, so a gentle sip is slow and a
-            // fully tipped phone empties like a joke glass.
-            // Device mounting/orientation can report the forward pitch with either
-            // sign. Once the phone reaches the spill angle, either sign means the
-            // top rim is over the mouth, so use its magnitude for the joke behavior.
-            let drinkingPitch = abs(signedPitch)
-            let drinkingThreshold = 0.70
-            self.isDrinking = drinkingPitch > drinkingThreshold && self.level > 0.06
+            // In the cup's front-to-back cross-section, tipping reduces the maximum
+            // volume the open top rim can retain. Drain only the amount above that
+            // angle-dependent capacity; holding one angle settles at one level.
+            let spillAngle = atan2(abs(gravity.z), max(0.001, -gravity.y))
+            let spillThreshold = 0.70
+            let emptyAngle = 1.48
+            let spillProgress = max(0.0, min(1.0, (spillAngle - spillThreshold) / (emptyAngle - spillThreshold)))
+            let retainedLevel = max(0.06, 0.94 - pow(spillProgress, 1.25) * 0.88)
+            let overflow = max(0.0, self.level - retainedLevel)
+            self.isDrinking = overflow > 0.001
             if self.isDrinking {
-                let mouthAngle = drinkingPitch - drinkingThreshold
-                let drainPerFrame = min(0.012, 0.0018 + mouthAngle * 0.008)
+                let drainPerFrame = min(0.014, 0.0008 + overflow * 0.12 + spillProgress * 0.004)
                 self.level = max(0.06, self.level - drainPerFrame)
             }
         }
