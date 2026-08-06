@@ -47,7 +47,7 @@ private struct FoamPhotoTexture: View {
                 let foamHeight = 18.0 + CGFloat(fill) * 42.0
                 let shimmer = sin(timeline.date.timeIntervalSinceReferenceDate * 0.72) * 0.018
                 let drift = CGFloat(sin(timeline.date.timeIntervalSinceReferenceDate * 0.31) * 1.2)
-                Image("FoamTexture")
+                Image("FoamTextureV2")
                     .resizable()
                     .scaledToFill()
                     .frame(width: proxy.size.width, height: foamHeight + 28)
