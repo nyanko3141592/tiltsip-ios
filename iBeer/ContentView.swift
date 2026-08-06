@@ -17,7 +17,7 @@ struct ContentView: View {
             MetalGlassView(drink: drink, fill: motion.level, carbonation: 0.82, tilt: motion.tilt * 180 / .pi, isPouring: false)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             HStack(spacing: 8) {
-                Circle().fill(drink == .beer ? Color.orange : Color.red.opacity(0.7)).frame(width: 7, height: 7)
+                Circle().fill(drink == .beer ? Color.yellow : Color.red.opacity(0.7)).frame(width: 7, height: 7)
                 Text(drink.rawValue).font(.system(size: 11, weight: .bold, design: .rounded)).tracking(2.2)
             }
             .foregroundStyle(.white.opacity(0.42))
@@ -79,10 +79,10 @@ private struct FluidCanvas: View {
                 liquid.closeSubpath()
 
                 let beer = drink == .beer
-                let liquidColors: [Color] = beer ? [Color(red: 1.0, green: 0.62, blue: 0.16), Color(red: 0.70, green: 0.20, blue: 0.012), Color(red: 0.30, green: 0.045, blue: 0.004)] : [Color(red: 0.25, green: 0.035, blue: 0.02), Color(red: 0.035, green: 0.004, blue: 0.003)]
+                let liquidColors: [Color] = beer ? [Color(red: 1.0, green: 0.72, blue: 0.14), Color(red: 0.90, green: 0.40, blue: 0.025), Color(red: 0.46, green: 0.10, blue: 0.004)] : [Color(red: 0.25, green: 0.035, blue: 0.02), Color(red: 0.035, green: 0.004, blue: 0.003)]
                 context.fill(liquid, with: .linearGradient(Gradient(colors: liquidColors), startPoint: CGPoint(x: 0, y: surface), endPoint: CGPoint(x: 0, y: size.height)))
 
-                let foam = beer ? Color(red: 1.0, green: 0.80, blue: 0.46) : Color(red: 0.28, green: 0.08, blue: 0.06)
+                let foam = beer ? Color(red: 1.0, green: 0.90, blue: 0.66) : Color(red: 0.28, green: 0.08, blue: 0.06)
                 var foamBand = Path()
                 foamBand.move(to: CGPoint(x: 0, y: surface - foamHeight - slope * size.width / 2))
                 for x in stride(from: 0, through: size.width, by: 8) {

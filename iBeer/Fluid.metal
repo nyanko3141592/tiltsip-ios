@@ -75,10 +75,10 @@ fragment float4 surfaceFragment(SurfaceOut in [[stage_in]], constant Uniforms &u
     float foamMask = (1.0 - smoothstep(0.0, 0.085, abs(uv.y - surface))) * (0.60 + foamTexture * 0.48);
     float liquidGrain = fbm(uv * float2(5.0, 19.0) + float2(0.0, u.time * 0.03));
     float3 beer = u.color.rgb * (0.92 + 0.18 * (1.0 - uv.y));
-    beer += float3(0.16, 0.072, 0.008) * sin(uv.x * 5.0 + u.time * 0.25);
+    beer += float3(0.13, 0.085, 0.018) * sin(uv.x * 5.0 + u.time * 0.25);
     beer *= 0.90 + liquidGrain * 0.16;
     float isBeer = step(0.30, u.color.r);
-    float3 foam = mix(float3(0.19, 0.035, 0.022), float3(1.0, 0.72, 0.38), isBeer);
+    float3 foam = mix(float3(0.19, 0.035, 0.022), float3(1.0, 0.86, 0.58), isBeer);
     float3 color = mix(beer, foam, foamMask * 0.96);
     float rim = 1.0 - smoothstep(0.0, 0.008, abs(uv.y - surface));
     color += float3(1.0, 0.74, 0.34) * rim * isBeer * 0.24;
