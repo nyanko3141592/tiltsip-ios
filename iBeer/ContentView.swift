@@ -13,7 +13,7 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-            FluidBackdrop(drink: drink, fill: motion.level, tilt: motion.tilt, energy: motion.sloshEnergy)
+            FluidBackdrop(drink: drink, fill: motion.level, tilt: motion.tilt, energy: motion.sloshEnergy, flow: motion.flow)
             MetalGlassView(drink: drink, fill: motion.level, carbonation: 0.82, tilt: motion.tilt * 180 / .pi, isPouring: false)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             HStack(spacing: 8) {
@@ -39,10 +39,11 @@ private struct FluidBackdrop: View {
     let fill: Double
     let tilt: Double
     let energy: Double
+    let flow: Double
 
     var body: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
-            FluidCanvas(drink: drink, time: timeline.date.timeIntervalSinceReferenceDate, fill: fill, tilt: tilt, energy: energy)
+            FluidCanvas(drink: drink, time: timeline.date.timeIntervalSinceReferenceDate, fill: fill, tilt: tilt, energy: energy, flow: flow)
         }
     }
 }
@@ -53,6 +54,7 @@ private struct FluidCanvas: View {
     let fill: Double
     let tilt: Double
     let energy: Double
+    let flow: Double
 
     var body: some View {
         Canvas { context, size in
@@ -68,7 +70,8 @@ private struct FluidCanvas: View {
                     let normalizedX = Double(x / size.width)
                     let wave1 = sin(normalizedX * 15.0 + t * 0.9) * waveAmplitude
                     let wave2 = sin(normalizedX * 31.0 - t * 0.5) * waveAmplitude * 0.28
-                    let y = surface + CGFloat(wave1 + wave2) + slope * (x - size.width / 2)
+                    let wake = sin(normalizedX * 44.0 - t * 2.4 + flow * 3.0) * Double(energy) * 7.0 * exp(-abs(normalizedX - 0.5) * 2.8)
+                    let y = surface + CGFloat(wave1 + wave2 + wake) + slope * (x - size.width / 2)
                     liquid.addLine(to: CGPoint(x: x, y: y))
                 }
                 liquid.addLine(to: CGPoint(x: size.width, y: size.height))
@@ -120,7 +123,8 @@ private struct FluidCanvas: View {
                     let x = CGFloat((sin(seed) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
                     let speed = 0.015 + Double(i % 5) * 0.004
                     let progress = (t * speed + Double(i) * 0.071).truncatingRemainder(dividingBy: 1.0)
-                    let y = size.height - progress * (size.height - surface + 30)
+                    let drift = CGFloat(flow) * progress * 16.0
+                    let y = size.height - progress * (size.height - surface + 30) + drift
                     let r = CGFloat(1.0 + Double(i % 3))
                     let bubble = Path(ellipseIn: CGRect(x: x - r, y: y - r, width: r * 2, height: r * 2))
                     context.fill(Path(ellipseIn: CGRect(x: x - r * 1.25, y: y - r * 1.25, width: r * 2.5, height: r * 2.5)), with: .color(.white.opacity(beer ? 0.045 : 0.025)))
@@ -146,6 +150,7 @@ private final class MotionManager: ObservableObject {
     @Published var tilt: Double = 0
     @Published var level: Double = 0.94
     @Published var sloshEnergy: Double = 0
+    @Published var flow: Double = 0
     private let manager = CMMotionManager()
     private var tiltVelocity: Double = 0
 
@@ -164,6 +169,7 @@ private final class MotionManager: ObservableObject {
             self.tilt += self.tiltVelocity / 30.0
             self.tilt = max(-0.55, min(0.55, self.tilt))
             self.sloshEnergy = min(1.0, max(abs(self.tiltVelocity) * 1.8, self.sloshEnergy * 0.94))
+            self.flow = max(-1.0, min(1.0, self.tiltVelocity * 4.0))
             if pitch > 0.92 {
                 let sip = min(0.0035, 0.00035 + (pitch - 0.92) * 0.0022)
                 self.level = max(0.06, self.level - sip)
