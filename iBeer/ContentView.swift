@@ -106,6 +106,23 @@ private struct FluidCanvas: View {
                 context.fill(liquid, with: .linearGradient(Gradient(colors: liquidColors), startPoint: CGPoint(x: 0, y: surface), endPoint: CGPoint(x: 0, y: size.height)))
                 context.fill(liquid, with: .radialGradient(Gradient(colors: [.white.opacity(beer ? 0.15 : 0.05), .clear]), center: CGPoint(x: size.width * 0.42, y: surface + size.height * 0.30), startRadius: 0, endRadius: size.width * 0.78))
                 context.fill(liquid, with: .linearGradient(Gradient(colors: [.black.opacity(0.18), .clear, .black.opacity(0.24)]), startPoint: CGPoint(x: 0, y: 0), endPoint: CGPoint(x: size.width, y: 0)))
+                context.fill(liquid, with: .radialGradient(Gradient(colors: [.clear, .black.opacity(beer ? 0.16 : 0.24)]), center: CGPoint(x: size.width * 0.5, y: size.height * 1.08), startRadius: size.width * 0.08, endRadius: size.width * 0.92))
+
+                // Light attenuates through the drink. These broad, moving shafts are
+                // deliberately soft so they read as volume, not graphic stripes.
+                if beer {
+                    context.drawLayer { layer in
+                        layer.addFilter(.blur(radius: 18))
+                        for beam in 0..<4 {
+                            let phase = t * (0.10 + Double(beam) * 0.015) + Double(beam) * 1.8
+                            let x = size.width * (0.10 + CGFloat(beam) * 0.25) + CGFloat(sin(phase) * 18)
+                            var lightShaft = Path()
+                            lightShaft.move(to: CGPoint(x: x, y: surface + 28))
+                            lightShaft.addLine(to: CGPoint(x: x + size.width * 0.15, y: size.height + 28))
+                            layer.stroke(lightShaft, with: .color(.white.opacity(0.045 + energy * 0.035)), lineWidth: 17)
+                        }
+                    }
+                }
 
                 // The phone edges act like the inside wall of a glass: a faint meniscus
                 // and side falloff make the liquid feel curved instead of painted flat.
