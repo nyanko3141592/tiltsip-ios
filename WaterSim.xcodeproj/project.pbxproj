@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4B88EC77C01305B321E5D669 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A82193806C0ED2E8E4E92945 /* Assets.xcassets */; };
 		B425C612B328B822D0F6A1B7 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2EDA747E328689A49233643 /* ContentView.swift */; };
 		B9A5DF236C79CC5D66EFFA59 /* MetalGlassView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC55DB52EBC55A4AD023531C /* MetalGlassView.swift */; };
 		BF90921A693D79DE1F13E770 /* Fluid.metal in Sources */ = {isa = PBXBuildFile; fileRef = B35E489FD6C777975AE393FA /* Fluid.metal */; };
@@ -15,6 +16,7 @@
 
 /* Begin PBXFileReference section */
 		9E209C91024919CAEA67D9AF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		A82193806C0ED2E8E4E92945 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B35E489FD6C777975AE393FA /* Fluid.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Fluid.metal; sourceTree = "<group>"; };
 		CC55DB52EBC55A4AD023531C /* MetalGlassView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalGlassView.swift; sourceTree = "<group>"; };
 		D2EDA747E328689A49233643 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -42,6 +44,7 @@
 		9D18961F0BE25D84267DBD73 /* iBeer */ = {
 			isa = PBXGroup;
 			children = (
+				A82193806C0ED2E8E4E92945 /* Assets.xcassets */,
 				D2EDA747E328689A49233643 /* ContentView.swift */,
 				B35E489FD6C777975AE393FA /* Fluid.metal */,
 				DADA64337F380811B52EE5CA /* iBeerApp.swift */,
@@ -59,6 +62,7 @@
 			buildConfigurationList = 6EB2BF0FB37D344523E03850 /* Build configuration list for PBXNativeTarget "WaterSim" */;
 			buildPhases = (
 				0A676F223F81072ACD13B04A /* Sources */,
+				3ECCFB140B78BF4BEA2E8810 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -103,6 +107,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3ECCFB140B78BF4BEA2E8810 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B88EC77C01305B321E5D669 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		0A676F223F81072ACD13B04A /* Sources */ = {
