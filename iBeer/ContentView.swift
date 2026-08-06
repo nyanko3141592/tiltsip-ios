@@ -14,6 +14,9 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             FluidBackdrop(drink: drink, fill: motion.level, tilt: motion.tilt, energy: motion.sloshEnergy, flow: motion.flow)
+            if drink == .beer {
+                FoamPhotoTexture(fill: motion.level)
+            }
             MetalGlassView(drink: drink, fill: motion.level, carbonation: 0.82, tilt: motion.tilt * 180 / .pi, isPouring: false)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             HStack(spacing: 8) {
@@ -31,6 +34,26 @@ struct ContentView: View {
         .accessibilityLabel("液体シミュレーション。タップでビールとコーラを切り替え")
         .preferredColorScheme(.dark)
         .task { motion.start() }
+    }
+}
+
+private struct FoamPhotoTexture: View {
+    let fill: Double
+
+    var body: some View {
+        GeometryReader { proxy in
+            let surface = proxy.size.height * (0.08 + CGFloat(1.0 - fill) * 0.80)
+            let foamHeight = 18.0 + CGFloat(fill) * 42.0
+            Image("FoamTexture")
+                .resizable()
+                .scaledToFill()
+                .frame(width: proxy.size.width, height: foamHeight + 28)
+                .clipped()
+                .opacity(0.16)
+                .blendMode(.screen)
+                .offset(y: surface - foamHeight)
+        }
+        .allowsHitTesting(false)
     }
 }
 
