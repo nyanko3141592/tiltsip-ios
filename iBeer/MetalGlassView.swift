@@ -43,8 +43,8 @@ struct MetalGlassView: UIViewRepresentable {
         func draw(in view: MTKView) {
             guard let drawable = view.currentDrawable, let pass = view.currentRenderPassDescriptor, let command = queue.makeCommandBuffer() else { return }
             time += 1 / 60
-            let u = uniform.contents().bindMemory(to: Uniforms.self, capacity: 1); u.time = time; u.fill = fill; u.carbonation = carbonation; u.tilt = tilt; u.pouring = isPouring ? 1 : 0
-            let color = drink == .beer ? SIMD4<Float>(0.98, 0.46, 0.06, 1) : SIMD4<Float>(0.16, 0.035, 0.018, 1); u.color = color
+            let u = uniform.contents().bindMemory(to: Uniforms.self, capacity: 1); u.pointee.time = time; u.pointee.fill = fill; u.pointee.carbonation = carbonation; u.pointee.tilt = tilt; u.pointee.pouring = isPouring ? 1 : 0
+            let color = drink == .beer ? SIMD4<Float>(0.98, 0.46, 0.06, 1) : SIMD4<Float>(0.16, 0.035, 0.018, 1); u.pointee.color = color
             if let encoder = command.makeComputeCommandEncoder() { encoder.setComputePipelineState(compute); encoder.setBuffer(buffer, offset: 0, index: 0); encoder.setBuffer(uniform, offset: 0, index: 1); encoder.dispatchThreads(MTLSize(width: 380, height: 1, depth: 1), threadsPerThreadgroup: MTLSize(width: min(380, compute.maxTotalThreadsPerThreadgroup), height: 1, depth: 1)); encoder.endEncoding() }
             let encoder = command.makeRenderCommandEncoder(descriptor: pass)!; encoder.setRenderPipelineState(render); encoder.setVertexBuffer(buffer, offset: 0, index: 0); encoder.setVertexBuffer(uniform, offset: 0, index: 1); encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 6, instanceCount: 380); encoder.endEncoding(); command.present(drawable); command.commit()
         }
@@ -57,4 +57,3 @@ struct MetalGlassView: UIViewRepresentable {
 
 private struct Particle { var x: Float; var y: Float; var vx: Float; var vy: Float; var size: Float; var kind: Float; var phase: Float }
 private struct Uniforms { var time: Float = 0; var fill: Float = 0.76; var carbonation: Float = 0.68; var tilt: Float = 0; var pouring: Float = 1; var color = SIMD4<Float>(1, 0.5, 0.1, 1) }
-
