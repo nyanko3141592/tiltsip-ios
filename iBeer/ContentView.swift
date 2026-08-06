@@ -332,10 +332,11 @@ private struct FluidCanvas: View {
                     let drift = CGFloat(flow) * progress * 16.0
                     let y = size.height - progress * (size.height - surface + 30) + drift
                     let r = CGFloat(1.0 + Double(i % 3))
+                    let depthLight = 0.55 + progress * 0.55
                     let bubble = Path(ellipseIn: CGRect(x: x - r, y: y - r, width: r * 2, height: r * 2))
-                    context.fill(Path(ellipseIn: CGRect(x: x - r * 1.25, y: y - r * 1.25, width: r * 2.5, height: r * 2.5)), with: .color(.white.opacity(beer ? 0.045 : 0.025)))
-                    context.stroke(bubble, with: .color(.white.opacity(beer ? 0.35 : 0.20)), lineWidth: 0.8)
-                    context.fill(Path(ellipseIn: CGRect(x: x - r * 0.35, y: y - r * 0.45, width: r * 0.45, height: r * 0.45)), with: .color(.white.opacity(beer ? 0.45 : 0.25)))
+                    context.fill(Path(ellipseIn: CGRect(x: x - r * 1.25, y: y - r * 1.25, width: r * 2.5, height: r * 2.5)), with: .color(.white.opacity((beer ? 0.045 : 0.025) * depthLight)))
+                    context.stroke(bubble, with: .color(.white.opacity((beer ? 0.35 : 0.20) * depthLight)), lineWidth: 0.8)
+                    context.fill(Path(ellipseIn: CGRect(x: x - r * 0.35, y: y - r * 0.45, width: r * 0.45, height: r * 0.45)), with: .color(.white.opacity((beer ? 0.45 : 0.25) * depthLight)))
                 }
 
                 // Fine carbonation dust fills the spaces between the larger bubbles.
