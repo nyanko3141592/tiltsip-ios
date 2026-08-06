@@ -204,7 +204,10 @@ private struct FluidCanvas: View {
                 var foamBand = Path()
                 foamBand.move(to: CGPoint(x: 0, y: surface - foamHeight - slope * size.width / 2))
                 for x in stride(from: 0, through: size.width, by: 8) {
-                    let y = surface - foamHeight + sin(Double(x / size.width) * 17.0 + t * 0.55) * (3 + CGFloat(energy) * 8) + slope * (x - size.width / 2)
+                    let normalizedX = Double(x / size.width)
+                    let foamWave = sin(normalizedX * 17.0 + t * 0.55) * (3 + CGFloat(energy) * 8)
+                    let foamRipple = sin(normalizedX * 41.0 - t * 0.9 + flow * 2.0) * (1.2 + CGFloat(energy) * 2.8)
+                    let y = surface - foamHeight + foamWave + foamRipple + slope * (x - size.width / 2)
                     foamBand.addLine(to: CGPoint(x: x, y: y))
                 }
                 foamBand.addLine(to: CGPoint(x: size.width, y: surface + 27))
