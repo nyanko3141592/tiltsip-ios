@@ -81,6 +81,8 @@ private struct FluidCanvas: View {
                 let beer = drink == .beer
                 let liquidColors: [Color] = beer ? [Color(red: 1.0, green: 0.72, blue: 0.14), Color(red: 0.90, green: 0.40, blue: 0.025), Color(red: 0.46, green: 0.10, blue: 0.004)] : [Color(red: 0.25, green: 0.035, blue: 0.02), Color(red: 0.035, green: 0.004, blue: 0.003)]
                 context.fill(liquid, with: .linearGradient(Gradient(colors: liquidColors), startPoint: CGPoint(x: 0, y: surface), endPoint: CGPoint(x: 0, y: size.height)))
+                context.fill(liquid, with: .radialGradient(Gradient(colors: [.white.opacity(beer ? 0.15 : 0.05), .clear]), center: CGPoint(x: size.width * 0.42, y: surface + size.height * 0.30), startRadius: 0, endRadius: size.width * 0.78))
+                context.fill(liquid, with: .linearGradient(Gradient(colors: [.black.opacity(0.18), .clear, .black.opacity(0.24)]), startPoint: CGPoint(x: 0, y: 0), endPoint: CGPoint(x: size.width, y: 0)))
 
                 let foam = beer ? Color(red: 1.0, green: 0.90, blue: 0.66) : Color(red: 0.28, green: 0.08, blue: 0.06)
                 var foamBand = Path()
