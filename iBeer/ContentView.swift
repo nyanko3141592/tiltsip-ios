@@ -190,8 +190,10 @@ private struct FluidCanvas: View {
                     var rightEdge = Path()
                     rightEdge.move(to: CGPoint(x: size.width - 3, y: surface + 18))
                     rightEdge.addLine(to: CGPoint(x: size.width - 3, y: size.height))
-                    layer.stroke(leftEdge, with: .color(.white.opacity(beer ? 0.075 : 0.03)), lineWidth: 10)
-                    layer.stroke(rightEdge, with: .color(.black.opacity(beer ? 0.17 : 0.22)), lineWidth: 14)
+                    let edgeLight = beer ? 0.075 + abs(tilt) * 0.035 : 0.03
+                    let edgeShade = beer ? 0.17 + abs(tilt) * 0.025 : 0.22
+                    layer.stroke(leftEdge, with: .color(.white.opacity(edgeLight)), lineWidth: 10)
+                    layer.stroke(rightEdge, with: .color(.black.opacity(edgeShade)), lineWidth: 14)
                 }
 
                 let foam = beer ? Color(red: 1.0, green: 0.90, blue: 0.66) : Color(red: 0.28, green: 0.08, blue: 0.06)
