@@ -110,6 +110,26 @@ private struct FluidCanvas: View {
                     context.fill(Path(ellipseIn: CGRect(x: x - radius, y: y - radius * 0.55, width: radius * 2, height: radius * 1.1)), with: .color(.black.opacity(0.065)))
                 }
 
+                // Foam cells catch a narrow highlight and keep a soft shadow on their lower rim.
+                for i in 0..<30 {
+                    let seed = Double(i) * 4.271
+                    let x = CGFloat((sin(seed * 2.7) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
+                    let y = surface - foamHeight * 0.72 + CGFloat((sin(seed * 1.9 + t * 0.22) * 0.5 + 0.5)) * (foamHeight * 1.35)
+                    let radius = CGFloat(3 + (i % 4) * 2)
+                    let cell = Path(ellipseIn: CGRect(x: x - radius, y: y - radius * 0.62, width: radius * 2, height: radius * 1.24))
+                    context.stroke(cell, with: .color(.white.opacity(beer ? 0.22 : 0.12)), lineWidth: 0.8)
+                    context.fill(Path(ellipseIn: CGRect(x: x - radius * 0.48, y: y - radius * 0.28, width: radius * 0.38, height: radius * 0.22)), with: .color(.white.opacity(beer ? 0.38 : 0.18)))
+                    context.fill(Path(ellipseIn: CGRect(x: x + radius * 0.18, y: y + radius * 0.18, width: radius * 0.52, height: radius * 0.24)), with: .color(.black.opacity(0.10)))
+                }
+
+                var foamReflection = Path()
+                foamReflection.move(to: CGPoint(x: -20, y: surface + 5))
+                foamReflection.addCurve(to: CGPoint(x: size.width + 20, y: surface + 8), control1: CGPoint(x: size.width * 0.25, y: surface - 2), control2: CGPoint(x: size.width * 0.72, y: surface + 16))
+                context.drawLayer { layer in
+                    layer.addFilter(.blur(radius: 5))
+                    layer.stroke(foamReflection, with: .color(.white.opacity(beer ? 0.26 : 0.10)), lineWidth: 3)
+                }
+
                 var sheen = Path()
                 sheen.move(to: CGPoint(x: size.width * 0.18, y: surface + 35))
                 sheen.addLine(to: CGPoint(x: size.width * 0.28, y: size.height))
