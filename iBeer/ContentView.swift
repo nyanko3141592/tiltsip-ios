@@ -97,8 +97,12 @@ private struct FluidCanvas: View {
                     let normalizedX = Double(x / size.width)
                     let wave1 = sin(normalizedX * 15.0 + t * 0.9) * waveAmplitude
                     let wave2 = sin(normalizedX * 31.0 - t * 0.5) * waveAmplitude * 0.28
-                    let wake = sin(normalizedX * 44.0 - t * 2.4 + flow * 3.0) * Double(energy) * 7.0 * exp(-abs(normalizedX - 0.5) * 2.8)
-                    let y = surface + CGFloat(wave1 + wave2 + wake) + slope * (x - size.width / 2)
+                    let wakePhase = normalizedX * 44.0 - t * 2.4 + flow * 3.0
+                    let wakeEnvelope = exp(-abs(normalizedX - 0.5) * 2.8)
+                    let wake = sin(wakePhase) * 7.0 * Double(energy) * wakeEnvelope
+                    let waveOffset = CGFloat(wave1 + wave2 + wake)
+                    let slopeOffset = slope * (x - size.width / 2)
+                    let y = surface + waveOffset + slopeOffset
                     liquid.addLine(to: CGPoint(x: x, y: y))
                 }
                 liquid.addLine(to: CGPoint(x: size.width, y: size.height))
@@ -182,10 +186,24 @@ private struct FluidCanvas: View {
                 for i in 0..<24 {
                     let seed = Double(i) * 7.931
                     let x = CGFloat((sin(seed * 2.31) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
-                    let radius = CGFloat(4.0 + (sin(seed * 1.37) * 0.5 + 0.5) * 9.0)
-                    let y = surface - foamHeight * (0.36 + CGFloat((sin(seed * 2.17) * 0.5 + 0.5)) * 0.55) + CGFloat(sin(t * 0.24 + seed) * 1.4)
+                    let radiusNoise = sin(seed * 1.37) * 0.5 + 0.5
+                    let radius = CGFloat(4.0 + radiusNoise * 9.0)
+                    let yNoise = sin(seed * 2.17) * 0.5 + 0.5
+                    let yOffset = CGFloat(sin(t * 0.24 + seed) * 1.4)
+                    let y = surface - foamHeight * (0.36 + CGFloat(yNoise) * 0.55) + yOffset
                     let dome = CGRect(x: x - radius, y: y - radius * 0.60, width: radius * 2, height: radius * 1.20)
                     context.fill(Path(ellipseIn: dome), with: .radialGradient(Gradient(colors: [Color.white.opacity(0.40), foam.opacity(0.24), Color.black.opacity(0.12)]), center: CGPoint(x: x - radius * 0.24, y: y - radius * 0.26), startRadius: 0, endRadius: radius * 1.25))
+                }
+
+                // Slosh breaks a few foam pockets loose at the surface.
+                if beer && energy > 0.12 {
+                    for i in 0..<14 {
+                        let seed = Double(i) * 15.617
+                        let x = CGFloat((sin(seed * 1.8 + flow) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
+                        let y = surface + CGFloat(sin(seed * 2.4 + t * 1.6) * energy * 11.0) + CGFloat((sin(seed) * 0.5 + 0.5)) * 18
+                        let radius = CGFloat(0.7 + Double(i % 3) * 0.55) * CGFloat(0.7 + energy)
+                        context.fill(Path(ellipseIn: CGRect(x: x - radius, y: y - radius, width: radius * 2, height: radius * 2)), with: .color(.white.opacity(0.28 * energy)))
+                    }
                 }
 
                 for i in 0..<42 {
@@ -325,9 +343,13 @@ private final class MotionManager: ObservableObject {
             let targetTilt = max(-0.55, min(0.55, roll + forwardTilt))
             let springForce = (targetTilt - self.tilt) * 13.0 - self.tiltVelocity * 3.8
             self.tiltVelocity += springForce / 30.0
+            // A real glass reacts to a quick hand movement before its angle settles.
+            // Feed lateral user acceleration into the same inertial slosh velocity.
+            let lateralImpulse = max(-0.035, min(0.035, motion.userAcceleration.x * 0.018))
+            self.tiltVelocity += lateralImpulse
             self.tilt += self.tiltVelocity / 30.0
             self.tilt = max(-0.55, min(0.55, self.tilt))
-            self.sloshEnergy = min(1.0, max(abs(self.tiltVelocity) * 1.8, self.sloshEnergy * 0.94))
+            self.sloshEnergy = min(1.0, max(abs(self.tiltVelocity) * 1.8, abs(lateralImpulse) * 10.0, self.sloshEnergy * 0.94))
             self.flow = max(-1.0, min(1.0, self.tiltVelocity * 4.0))
             if pitch > 0.92 {
                 let sip = min(0.0035, 0.00035 + (pitch - 0.92) * 0.0022)
