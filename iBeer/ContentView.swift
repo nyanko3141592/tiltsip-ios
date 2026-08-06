@@ -10,31 +10,73 @@ enum Drink: String, CaseIterable, Identifiable {
 struct ContentView: View {
     @State private var drink: Drink = .beer
     @StateObject private var motion = MotionManager()
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @State private var presentedSheet: AppSheet?
 
     var body: some View {
         ZStack {
-            FluidBackdrop(drink: drink, fill: motion.level, tilt: motion.tilt, energy: motion.sloshEnergy, flow: motion.flow)
-            if drink == .beer {
-                FoamPhotoTexture(fill: motion.level, tilt: motion.tilt, energy: motion.sloshEnergy)
+            ZStack {
+                FluidBackdrop(drink: drink, fill: motion.level, tilt: motion.tilt, energy: motion.sloshEnergy, flow: motion.flow)
+                    .accessibilityHidden(true)
+                if drink == .beer {
+                    FoamPhotoTexture(fill: motion.level, tilt: motion.tilt, energy: motion.sloshEnergy)
+                        .accessibilityHidden(true)
+                }
+                MetalGlassView(drink: drink, fill: motion.level, carbonation: 0.82, tilt: motion.tilt * 180 / .pi, isPouring: false)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .accessibilityHidden(true)
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture { drink = drink == .beer ? .cola : .beer }
+                    .accessibilityLabel("ビールとコーラを切り替える")
+                    .accessibilityAddTraits(.isButton)
             }
-            MetalGlassView(drink: drink, fill: motion.level, carbonation: 0.82, tilt: motion.tilt * 180 / .pi, isPouring: false)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            HStack(spacing: 8) {
-                Circle().fill(drink == .beer ? Color.yellow : Color.red.opacity(0.7)).frame(width: 7, height: 7)
-                Text(drink.rawValue).font(.system(size: 11, weight: .bold, design: .rounded)).tracking(2.2)
+            .ignoresSafeArea()
+            .accessibilityHidden(!hasCompletedOnboarding)
+            .allowsHitTesting(hasCompletedOnboarding)
+
+            if hasCompletedOnboarding {
+                Button {
+                    presentedSheet = .information
+                } label: {
+                    HStack(spacing: 8) {
+                        Circle().fill(drink == .beer ? Color.yellow : Color.red.opacity(0.7)).frame(width: 7, height: 7)
+                        Text(drink.rawValue).font(.system(size: 11, weight: .bold, design: .rounded)).tracking(2.2)
+                    }
+                    .foregroundStyle(.white.opacity(0.48))
+                    .frame(minWidth: 88, minHeight: 44)
+                }
+                .buttonStyle(.plain)
+                .frame(maxHeight: .infinity, alignment: .top)
+                .accessibilityLabel("Water Simの情報と補充")
             }
-            .foregroundStyle(.white.opacity(0.42))
-            .padding(.top, 12)
-            .frame(maxHeight: .infinity, alignment: .top)
-            .allowsHitTesting(false)
+
+            if !hasCompletedOnboarding {
+                OnboardingView {
+                    withAnimation(.easeOut(duration: 0.35)) {
+                        hasCompletedOnboarding = true
+                    }
+                }
+                .transition(.opacity)
+                .zIndex(10)
+            }
         }
-        .ignoresSafeArea()
-        .contentShape(Rectangle())
-        .onTapGesture { drink = drink == .beer ? .cola : .beer }
-        .accessibilityLabel("液体シミュレーション。タップでビールとコーラを切り替え")
         .preferredColorScheme(.dark)
         .task { motion.start() }
+        .sheet(item: $presentedSheet) { _ in
+            AppInformationView(
+                onRefill: { motion.refill() },
+                onReplayOnboarding: { hasCompletedOnboarding = false }
+            )
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
+        }
     }
+}
+
+private enum AppSheet: String, Identifiable {
+    case information
+    var id: String { rawValue }
 }
 
 private struct FoamPhotoTexture: View {
@@ -52,7 +94,7 @@ private struct FoamPhotoTexture: View {
                 let shimmer = sin(timeline.date.timeIntervalSinceReferenceDate * 0.72) * 0.012
                 let drift = CGFloat(sin(timeline.date.timeIntervalSinceReferenceDate * 0.31) * 1.2)
                 let tiltFade = 1.0 - min(0.58, abs(tilt) * 0.46)
-                Image("FoamTextureV2")
+                Image(decorative: "FoamTextureV2")
                     .resizable()
                     .scaledToFill()
                     .frame(width: proxy.size.width, height: foamHeight + 28)
@@ -61,6 +103,7 @@ private struct FoamPhotoTexture: View {
                     .blendMode(.screen)
                     .rotationEffect(.radians(tilt), anchor: .center)
                     .offset(x: drift, y: surface - foamHeight)
+                    .accessibilityHidden(true)
             }
         }
         .allowsHitTesting(false)
@@ -91,6 +134,11 @@ private struct FluidCanvas: View {
 
     var body: some View {
         Canvas { context, size in
+            render(context: &context, size: size)
+        }
+    }
+
+    private func render(context: inout GraphicsContext, size: CGSize) {
                 let t = time
                 // The free surface stays horizontal in world space. Core Motion gives
                 // us that horizon angle; solve the intercept so rotating the line does
@@ -478,7 +526,6 @@ private struct FluidCanvas: View {
                     layer.addFilter(.blur(radius: 24))
                     layer.stroke(coverGlare, with: .color(.white.opacity(beer ? 0.028 : 0.012)), lineWidth: 30)
                 }
-            }
     }
 }
 
@@ -573,6 +620,13 @@ private final class MotionManager: ObservableObject {
                 self.drainRate = 0
             }
         }
+    }
+
+    func refill() {
+        level = 0.94
+        drainRate = 0
+        isDrinking = false
+        sloshEnergy = max(sloshEnergy, 0.28)
     }
 
     deinit { manager.stopDeviceMotionUpdates() }
