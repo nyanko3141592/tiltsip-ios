@@ -446,10 +446,11 @@ private final class MotionManager: ObservableObject {
         manager.startDeviceMotionUpdates(using: .xArbitraryZVertical, to: .main) { [weak self] motion, _ in
             guard let self, let motion else { return }
             let roll = motion.attitude.roll
-            let pitch = abs(motion.attitude.pitch)
-            // Roll handles side-to-side slosh; pitch makes the phone behave like a glass while drinking.
-            let forwardTilt = sin(motion.attitude.pitch) * 0.62
-            let targetTilt = max(-0.55, min(0.55, roll + forwardTilt))
+            let signedPitch = motion.attitude.pitch
+            // Core Motion's positive direction is opposite to the visible liquid slope
+            // for this portrait cup, so invert the combined tilt before driving the fluid.
+            let forwardTilt = sin(signedPitch) * 0.62
+            let targetTilt = max(-0.55, min(0.55, -(roll + forwardTilt)))
             let springForce = (targetTilt - self.tilt) * 13.0 - self.tiltVelocity * 3.8
             self.tiltVelocity += springForce / 30.0
             // A real glass reacts to a quick hand movement before its angle settles.
@@ -461,8 +462,10 @@ private final class MotionManager: ObservableObject {
             self.tilt = max(-0.55, min(0.55, self.tilt))
             self.sloshEnergy = min(1.0, max(abs(self.tiltVelocity) * 1.8, abs(lateralImpulse) * 10.0, self.sloshEnergy * 0.94))
             self.flow = max(-1.0, min(1.0, self.tiltVelocity * 4.0))
-            if pitch > 0.92 {
-                let sip = min(0.0035, 0.00035 + (pitch - 0.92) * 0.0022)
+            // Only the mouth-facing direction drains from the phone's top edge.
+            let drinkingPitch = -signedPitch
+            if drinkingPitch > 0.92 {
+                let sip = min(0.006, 0.00075 + (drinkingPitch - 0.92) * 0.004)
                 self.level = max(0.06, self.level - sip)
             }
         }
