@@ -211,8 +211,8 @@ private struct FluidCanvas: View {
                 context.fill(foamBand, with: .linearGradient(Gradient(colors: [foam.opacity(0.98), foam.opacity(0.70)]), startPoint: CGPoint(x: 0, y: surface - foamHeight), endPoint: CGPoint(x: 0, y: surface + 27)))
 
                 var foamShadow = Path()
-                foamShadow.move(to: CGPoint(x: -10, y: surface + 5))
-                foamShadow.addCurve(to: CGPoint(x: size.width + 10, y: surface + 7), control1: CGPoint(x: size.width * 0.28, y: surface - 1), control2: CGPoint(x: size.width * 0.70, y: surface + 14))
+                foamShadow.move(to: CGPoint(x: -10, y: surface + 5 + CGFloat(flow) * 2.0))
+                foamShadow.addCurve(to: CGPoint(x: size.width + 10, y: surface + 7 - CGFloat(flow) * 2.0), control1: CGPoint(x: size.width * 0.28, y: surface - 1 + CGFloat(flow) * 3.0), control2: CGPoint(x: size.width * 0.70, y: surface + 14 - CGFloat(flow) * 3.0))
                 context.drawLayer { layer in
                     layer.addFilter(.blur(radius: 7))
                     layer.stroke(foamShadow, with: .color(.black.opacity(beer ? 0.24 : 0.16)), lineWidth: 10)
