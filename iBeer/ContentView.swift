@@ -209,7 +209,7 @@ private struct FluidCanvas: View {
                     layer.stroke(rightEdge, with: .color(.black.opacity(edgeShade)), lineWidth: 14)
                 }
 
-                let foam = beer ? Color(red: 1.0, green: 0.90, blue: 0.66) : Color(red: 0.28, green: 0.08, blue: 0.06)
+                let foam = beer ? Color(red: 1.0, green: 0.90, blue: 0.66) : Color(red: 0.52, green: 0.30, blue: 0.18)
                 var foamBand = Path()
                 foamBand.move(to: CGPoint(x: 0, y: surface - foamHeight - slope * size.width / 2))
                 for x in stride(from: 0, through: size.width, by: 8) {
