@@ -27,3 +27,5 @@ targets:
       path: iBeer/Info.plist
       properties:
         UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait

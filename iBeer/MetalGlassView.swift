@@ -116,4 +116,4 @@ struct MetalGlassView: UIViewRepresentable {
 }
 
 private struct Particle { var x: Float; var y: Float; var vx: Float; var vy: Float; var size: Float; var kind: Float; var phase: Float }
-private struct Uniforms { var time: Float = 0; var fill: Float = 0.73; var carbonation: Float = 0.82; var tilt: Float = 0; var pouring: Float = 0; var color = SIMD4<Float>(0.98, 0.42, 0.025, 1) }
+private struct Uniforms { var time: Float = 0; var fill: Float = 0.94; var carbonation: Float = 0.82; var tilt: Float = 0; var pouring: Float = 0; var color = SIMD4<Float>(0.98, 0.42, 0.025, 1) }

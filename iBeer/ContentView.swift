@@ -55,8 +55,10 @@ private struct FluidCanvas: View {
     var body: some View {
         Canvas { context, size in
                 let t = time
-                let surface = size.height * (0.84 - CGFloat(fill) * 0.71)
+                // The top edge of the phone is the cup rim. Drinking moves the surface downward.
+                let surface = size.height * (0.08 + CGFloat(1.0 - fill) * 0.80)
                 let slope = CGFloat(max(-0.55, min(0.55, tilt))) * 0.28
+                let foamHeight = 8.0 + CGFloat(fill) * 22.0
                 var liquid = Path()
                 liquid.move(to: CGPoint(x: 0, y: surface))
                 for x in stride(from: 0, through: size.width, by: 8) {
@@ -76,20 +78,20 @@ private struct FluidCanvas: View {
 
                 let foam = beer ? Color(red: 1.0, green: 0.80, blue: 0.46) : Color(red: 0.28, green: 0.08, blue: 0.06)
                 var foamBand = Path()
-                foamBand.move(to: CGPoint(x: 0, y: surface - 17 - slope * size.width / 2))
+                foamBand.move(to: CGPoint(x: 0, y: surface - foamHeight - slope * size.width / 2))
                 for x in stride(from: 0, through: size.width, by: 8) {
-                    let y = surface - 17 + sin(Double(x / size.width) * 17.0 + t * 0.55) * 3 + slope * (x - size.width / 2)
+                    let y = surface - foamHeight + sin(Double(x / size.width) * 17.0 + t * 0.55) * 3 + slope * (x - size.width / 2)
                     foamBand.addLine(to: CGPoint(x: x, y: y))
                 }
                 foamBand.addLine(to: CGPoint(x: size.width, y: surface + 27))
                 foamBand.addLine(to: CGPoint(x: 0, y: surface + 27))
                 foamBand.closeSubpath()
-                context.fill(foamBand, with: .linearGradient(Gradient(colors: [foam.opacity(0.98), foam.opacity(0.70)]), startPoint: CGPoint(x: 0, y: surface - 17), endPoint: CGPoint(x: 0, y: surface + 27)))
+                context.fill(foamBand, with: .linearGradient(Gradient(colors: [foam.opacity(0.98), foam.opacity(0.70)]), startPoint: CGPoint(x: 0, y: surface - foamHeight), endPoint: CGPoint(x: 0, y: surface + 27)))
 
                 for i in 0..<42 {
                     let seed = Double(i) * 9.173
                     let x = CGFloat((sin(seed) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
-                    let y = surface - 10 + CGFloat((sin(seed * 1.7 + t * 0.3) * 0.5 + 0.5)) * 32
+                    let y = surface - foamHeight + CGFloat((sin(seed * 1.7 + t * 0.3) * 0.5 + 0.5)) * (foamHeight + 20)
                     let radius = CGFloat(2 + (i % 4) * 2)
                     context.fill(Path(ellipseIn: CGRect(x: x - radius, y: y - radius * 0.6, width: radius * 2, height: radius * 1.2)), with: .color(foam.opacity(0.22)))
                 }
@@ -139,7 +141,7 @@ private struct FluidCanvas: View {
 
 private final class MotionManager: ObservableObject {
     @Published var tilt: Double = 0
-    @Published var level: Double = 0.73
+    @Published var level: Double = 0.94
     private let manager = CMMotionManager()
 
     func start() {

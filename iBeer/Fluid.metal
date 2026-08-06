@@ -35,7 +35,7 @@ kernel void updateParticles(device Particle *p [[buffer(0)]], constant Uniforms 
     q.vx += sin(u.time * 1.7 + q.phase) * 0.0022 * speed;
     q.vx *= 0.992; q.vy *= 0.998;
     q.x += q.vx * 0.016; q.y += q.vy * 0.016;
-    float surface = -0.72 + u.fill * 1.38;
+    float surface = -0.75 + u.fill * 1.59;
     if (q.kind < 0.5) {
         if (q.y > surface + 0.03) { q.y = surface + 0.03; q.vy *= -0.12; }
         if (q.y < -0.72) { q.y = -0.72; q.vy = abs(q.vy) * 0.45; }
@@ -68,7 +68,8 @@ vertex SurfaceOut surfaceVertex(uint vertexID [[vertex_id]]) {
 fragment float4 surfaceFragment(SurfaceOut in [[stage_in]], constant Uniforms &u [[buffer(0)]]) {
     float2 uv = in.uv;
     float wave = sin(uv.x * 13.0 + u.time * 0.72) * 0.010 + sin(uv.x * 29.0 - u.time * 0.41) * 0.004;
-    float surface = 0.275 + wave;
+    float surface = -0.75 + u.fill * 1.59;
+    surface = (surface + 1.0) * 0.5 + wave;
     float liquidMask = 1.0 - smoothstep(surface - 0.008, surface + 0.008, uv.y);
     float foamTexture = fbm(uv * float2(18.0, 48.0) + float2(u.time * 0.08, -u.time * 0.05));
     float foamMask = (1.0 - smoothstep(0.0, 0.085, abs(uv.y - surface))) * (0.60 + foamTexture * 0.48);
