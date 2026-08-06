@@ -1,12 +1,9 @@
 import SwiftUI
 
 enum Drink: String, CaseIterable, Identifiable {
-    case beer = "ビール"
-    case cola = "コーラ"
+    case beer = "BEER"
+    case cola = "COLA"
     var id: Self { self }
-    var symbol: String { self == .beer ? "🍺" : "🥤" }
-    var liquid: Color { self == .beer ? Color(red: 0.64, green: 0.22, blue: 0.018) : Color(red: 0.10, green: 0.018, blue: 0.012) }
-    var glow: Color { self == .beer ? Color(red: 0.98, green: 0.46, blue: 0.055) : Color(red: 0.34, green: 0.07, blue: 0.025) }
 }
 
 struct ContentView: View {
@@ -14,155 +11,81 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
-            Color(red: 0.035, green: 0.028, blue: 0.025).ignoresSafeArea()
-            RadialGradient(colors: [drink.glow.opacity(0.16), .clear], center: .center, startRadius: 30, endRadius: 330)
-                .ignoresSafeArea()
-
-            VStack(spacing: 0) {
-                header
-                Spacer(minLength: 4)
-                RealisticGlass(drink: drink)
-                    .frame(maxWidth: .infinity, maxHeight: 530)
-                Spacer(minLength: 10)
-                drinkPicker
+            FluidBackdrop(drink: drink)
+            MetalGlassView(drink: drink, fill: 0.73, carbonation: 0.82, tilt: 0, isPouring: false)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            HStack(spacing: 8) {
+                Circle().fill(drink == .beer ? Color.orange : Color.red.opacity(0.7)).frame(width: 7, height: 7)
+                Text(drink.rawValue).font(.system(size: 11, weight: .bold, design: .rounded)).tracking(2.2)
             }
-            .padding(.horizontal, 20)
+            .foregroundStyle(.white.opacity(0.42))
             .padding(.top, 12)
+            .frame(maxHeight: .infinity, alignment: .top)
+            .allowsHitTesting(false)
         }
+        .ignoresSafeArea()
+        .contentShape(Rectangle())
+        .onTapGesture { drink = drink == .beer ? .cola : .beer }
+        .accessibilityLabel("液体シミュレーション。タップでビールとコーラを切り替え")
         .preferredColorScheme(.dark)
-        .animation(.easeInOut(duration: 0.35), value: drink)
-    }
-
-    private var header: some View {
-        HStack(alignment: .lastTextBaseline) {
-            Text("iBeer").font(.system(size: 30, weight: .black, design: .rounded))
-            Text("FULL POUR").font(.system(size: 10, weight: .bold, design: .rounded)).tracking(1.4).foregroundStyle(.white.opacity(0.38))
-            Spacer()
-        }
-    }
-
-    private var drinkPicker: some View {
-        Picker("ドリンク", selection: $drink) {
-            ForEach(Drink.allCases) { item in Text("\(item.symbol)  \(item.rawValue)").tag(item) }
-        }
-        .pickerStyle(.segmented)
-        .accessibilityIdentifier("drinkPicker")
-        .padding(.bottom, 8)
     }
 }
 
-private struct RealisticGlass: View {
+private struct FluidBackdrop: View {
     let drink: Drink
 
     var body: some View {
-        GeometryReader { proxy in
-            let width = min(proxy.size.width * 0.64, 252.0)
-            let height = min(proxy.size.height * 0.90, 465.0)
-            ZStack {
-                Ellipse().fill(.black.opacity(0.50)).frame(width: width * 0.82, height: 26).blur(radius: 14).offset(y: height * 0.47)
-
-                ZStack {
-                    PintGlassShape()
-                        .fill(.white.opacity(0.045))
-
-                    VStack(spacing: 0) {
-                        FoamHead(drink: drink).frame(height: height * 0.16)
-                        Rectangle()
-                            .fill(LinearGradient(colors: [drink.glow, drink.liquid, drink.liquid.opacity(0.88)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                            .frame(height: height * 0.72)
-                    }
-                    .frame(width: width - 9, height: height * 0.89, alignment: .top)
-                    .clipShape(PintGlassShape())
-
-                    TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
-                        BubbleField(time: timeline.date.timeIntervalSinceReferenceDate, drink: drink)
-                            .frame(width: width - 14, height: height * 0.74)
-                            .clipShape(PintGlassShape())
-                    }
-
-                    GlassReflections()
-                        .frame(width: width, height: height)
-                        .clipShape(PintGlassShape())
-
-                    MetalGlassView(drink: drink, fill: 1.0, carbonation: 0.75, tilt: 0, isPouring: false)
-                        .frame(width: width - 10, height: height * 0.82)
-                        .clipShape(PintGlassShape())
-                }
-                .frame(width: width, height: height)
-                .overlay(PintGlassShape().stroke(.white.opacity(0.42), lineWidth: 1.6))
-                .overlay(PintGlassShape().stroke(.black.opacity(0.42), lineWidth: 5).blur(radius: 2).mask(PintGlassShape().stroke(lineWidth: 8)))
-                .shadow(color: drink.glow.opacity(0.26), radius: 28, y: 22)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-        .allowsHitTesting(false)
-    }
-}
-
-private struct PintGlassShape: Shape {
-    func path(in rect: CGRect) -> Path {
-        let inset = rect.width * 0.045
-        var path = Path()
-        path.move(to: CGPoint(x: rect.minX + inset, y: rect.minY + 5))
-        path.addQuadCurve(to: CGPoint(x: rect.maxX - inset, y: rect.minY + 5), control: CGPoint(x: rect.midX, y: rect.minY - 2))
-        path.addLine(to: CGPoint(x: rect.maxX - rect.width * 0.14, y: rect.maxY - rect.height * 0.07))
-        path.addQuadCurve(to: CGPoint(x: rect.minX + rect.width * 0.14, y: rect.maxY - rect.height * 0.07), control: CGPoint(x: rect.midX, y: rect.maxY + rect.height * 0.015))
-        path.closeSubpath()
-        return path
-    }
-}
-
-private struct FoamHead: View {
-    let drink: Drink
-    var body: some View {
-        GeometryReader { _ in
-            let cream = drink == .beer ? Color(red: 1.0, green: 0.83, blue: 0.57) : Color(red: 0.32, green: 0.12, blue: 0.07)
-            let lightCream = drink == .beer ? Color(red: 1.0, green: 0.90, blue: 0.70) : Color(red: 0.38, green: 0.15, blue: 0.08)
-            ZStack(alignment: .top) {
-                Rectangle().fill(cream)
-                HStack(spacing: -8) {
-                    ForEach(0..<9, id: \.self) { index in
-                        Circle().fill(index.isMultiple(of: 3) ? lightCream : cream)
-                            .frame(width: CGFloat(22 + (index % 3) * 9), height: CGFloat(18 + (index % 3) * 7))
-                            .offset(y: CGFloat(index % 2) * 4)
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .center)
-                .offset(y: -7)
-            }
+        TimelineView(.animation(minimumInterval: 1.0 / 30.0)) { timeline in
+            FluidCanvas(drink: drink, time: timeline.date.timeIntervalSinceReferenceDate)
         }
     }
 }
 
-private struct BubbleField: View {
-    let time: Double
+private struct FluidCanvas: View {
     let drink: Drink
+    let time: TimeInterval
+
     var body: some View {
         Canvas { context, size in
-            let bubbles: [(CGFloat, CGFloat, CGFloat, CGFloat)] = [
-                (0.18, 0.78, 3, 0.0), (0.31, 0.58, 2, 1.4), (0.43, 0.83, 2.5, 2.2), (0.54, 0.49, 2, 0.8),
-                (0.63, 0.72, 3, 2.9), (0.75, 0.37, 1.8, 1.2), (0.27, 0.30, 1.7, 2.7), (0.49, 0.65, 1.5, 4.1)
-            ]
-            for (x, y, radius, phase) in bubbles {
-                let rise = CGFloat((time * 0.022 + Double(phase)).truncatingRemainder(dividingBy: 1.0))
-                let point = CGPoint(x: size.width * (x + 0.012 * sin(CGFloat(time) + phase)), y: size.height * (y - rise * 0.16))
-                let circle = Path(ellipseIn: CGRect(x: point.x - radius, y: point.y - radius, width: radius * 2, height: radius * 2))
-                context.stroke(circle, with: .color(.white.opacity(drink == .beer ? 0.32 : 0.18)), lineWidth: 0.8)
+                let t = time
+                let surface = size.height * 0.32
+                var liquid = Path()
+                liquid.move(to: CGPoint(x: 0, y: surface))
+                for x in stride(from: 0, through: size.width, by: 8) {
+                    let normalizedX = Double(x / size.width)
+                    let wave1 = sin(normalizedX * 15.0 + t * 0.9) * 7.0
+                    let wave2 = sin(normalizedX * 31.0 - t * 0.5) * 2.0
+                    let y = surface + CGFloat(wave1 + wave2)
+                    liquid.addLine(to: CGPoint(x: x, y: y))
+                }
+                liquid.addLine(to: CGPoint(x: size.width, y: size.height))
+                liquid.addLine(to: CGPoint(x: 0, y: size.height))
+                liquid.closeSubpath()
+
+                let beer = drink == .beer
+                let liquidColors: [Color] = beer ? [Color(red: 1.0, green: 0.52, blue: 0.07), Color(red: 0.52, green: 0.12, blue: 0.01)] : [Color(red: 0.25, green: 0.035, blue: 0.02), Color(red: 0.035, green: 0.004, blue: 0.003)]
+                context.fill(liquid, with: .linearGradient(Gradient(colors: liquidColors), startPoint: CGPoint(x: 0, y: surface), endPoint: CGPoint(x: 0, y: size.height)))
+
+                let foam = beer ? Color(red: 1.0, green: 0.80, blue: 0.46) : Color(red: 0.28, green: 0.08, blue: 0.06)
+                for i in 0..<18 {
+                    let x = size.width * CGFloat(i) / 17.0
+                    let y = surface - 5 + sin(CGFloat(i) * 1.9 + CGFloat(t) * 0.6) * 4
+                    let radius = 15 + CGFloat((i * 7) % 11)
+                    context.fill(Path(ellipseIn: CGRect(x: x - radius, y: y - radius * 0.42, width: radius * 2, height: radius * 0.84)), with: .color(foam.opacity(0.92)))
+                }
+
+                for i in 0..<95 {
+                    let seed = Double(i) * 12.9898
+                    let x = CGFloat((sin(seed) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
+                    let speed = 0.015 + Double(i % 5) * 0.004
+                    let progress = (t * speed + Double(i) * 0.071).truncatingRemainder(dividingBy: 1.0)
+                    let y = size.height - progress * (size.height - surface + 30)
+                    let r = CGFloat(1.0 + Double(i % 3))
+                    let bubble = Path(ellipseIn: CGRect(x: x - r, y: y - r, width: r * 2, height: r * 2))
+                    context.stroke(bubble, with: .color(.white.opacity(beer ? 0.35 : 0.20)), lineWidth: 0.8)
+                }
             }
         }
-    }
-}
-
-private struct GlassReflections: View {
-    var body: some View {
-        ZStack {
-            LinearGradient(colors: [.white.opacity(0.42), .white.opacity(0.04), .clear], startPoint: .topLeading, endPoint: .bottomTrailing)
-                .frame(width: 7).blur(radius: 2).offset(x: -72)
-            LinearGradient(colors: [.clear, .white.opacity(0.16), .clear], startPoint: .top, endPoint: .bottom)
-                .frame(width: 2).offset(x: 77)
-            VStack { Spacer(); Rectangle().fill(.white.opacity(0.10)).frame(height: 1).padding(.horizontal, 13) }
-        }
-    }
 }
 
 #Preview { ContentView() }
