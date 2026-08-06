@@ -99,10 +99,11 @@ private struct FluidCanvas: View {
                     let wave1 = sin(normalizedX * 15.0 + t * 0.9) * waveAmplitude
                     let wave2 = sin(normalizedX * 31.0 - t * 0.5) * waveAmplitude * 0.28
                     let microRipple = sin(normalizedX * 73.0 + t * 1.7 + flow * 4.0) * (0.7 + Double(energy) * 2.0)
+                    let crossWave = sin(normalizedX * 9.0 - t * 0.7 + tilt * 5.0) * abs(tilt) * 4.0
                     let wakePhase = normalizedX * 44.0 - t * 2.4 + flow * 3.0
                     let wakeEnvelope = exp(-abs(normalizedX - 0.5) * 2.8)
                     let wake = sin(wakePhase) * 7.0 * Double(energy) * wakeEnvelope
-                    let waveOffset = CGFloat(wave1 + wave2 + wake + microRipple)
+                    let waveOffset = CGFloat(wave1 + wave2 + wake + microRipple + crossWave)
                     let slopeOffset = slope * (x - size.width / 2)
                     let y = surface + waveOffset + slopeOffset
                     liquid.addLine(to: CGPoint(x: x, y: y))
