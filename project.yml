@@ -1,0 +1,30 @@
+name: iBeer
+options:
+  bundleIdPrefix: com.naoki
+  deploymentTarget:
+    iOS: "18.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    TARGETED_DEVICE_FAMILY: "1"
+    DEVELOPMENT_TEAM: ""
+targets:
+  iBeer:
+    type: application
+    platform: iOS
+    sources:
+      - path: iBeer
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.naoki.iBeer
+        INFOPLIST_KEY_CFBundleDisplayName: iBeer
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.entertainment
+        INFOPLIST_KEY_UIStatusBarStyle: UIStatusBarStyleLightContent
+        INFOPLIST_KEY_UIRequiresFullScreen: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        SWIFT_EMIT_LOC_STRINGS: YES
+    info:
+      path: iBeer/Info.plist
+      properties:
+        UILaunchScreen: {}
+
