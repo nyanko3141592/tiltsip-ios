@@ -177,6 +177,17 @@ private struct FluidCanvas: View {
                     layer.stroke(foamShadow, with: .color(.black.opacity(beer ? 0.24 : 0.16)), lineWidth: 10)
                 }
 
+                // The head is made of overlapping domes, not a perfectly flat strip.
+                // Layered radial gradients create soft foam volume at the liquid line.
+                for i in 0..<24 {
+                    let seed = Double(i) * 7.931
+                    let x = CGFloat((sin(seed * 2.31) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
+                    let radius = CGFloat(4.0 + (sin(seed * 1.37) * 0.5 + 0.5) * 9.0)
+                    let y = surface - foamHeight * (0.36 + CGFloat((sin(seed * 2.17) * 0.5 + 0.5)) * 0.55) + CGFloat(sin(t * 0.24 + seed) * 1.4)
+                    let dome = CGRect(x: x - radius, y: y - radius * 0.60, width: radius * 2, height: radius * 1.20)
+                    context.fill(Path(ellipseIn: dome), with: .radialGradient(Gradient(colors: [Color.white.opacity(0.40), foam.opacity(0.24), Color.black.opacity(0.12)]), center: CGPoint(x: x - radius * 0.24, y: y - radius * 0.26), startRadius: 0, endRadius: radius * 1.25))
+                }
+
                 for i in 0..<42 {
                     let seed = Double(i) * 9.173
                     let x = CGFloat((sin(seed) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
