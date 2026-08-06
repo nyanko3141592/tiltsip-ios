@@ -15,7 +15,7 @@ struct ContentView: View {
         ZStack {
             FluidBackdrop(drink: drink, fill: motion.level, tilt: motion.tilt, energy: motion.sloshEnergy, flow: motion.flow)
             if drink == .beer {
-                FoamPhotoTexture(fill: motion.level)
+                FoamPhotoTexture(fill: motion.level, tilt: motion.tilt)
             }
             MetalGlassView(drink: drink, fill: motion.level, carbonation: 0.82, tilt: motion.tilt * 180 / .pi, isPouring: false)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -39,6 +39,7 @@ struct ContentView: View {
 
 private struct FoamPhotoTexture: View {
     let fill: Double
+    let tilt: Double
 
     var body: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 20.0)) { timeline in
@@ -54,7 +55,7 @@ private struct FoamPhotoTexture: View {
                     .clipped()
                     .opacity(0.145 + shimmer)
                     .blendMode(.screen)
-                    .offset(x: drift, y: surface - foamHeight)
+                    .offset(x: drift + CGFloat(tilt) * 22.0, y: surface - foamHeight)
             }
         }
         .allowsHitTesting(false)
@@ -97,10 +98,11 @@ private struct FluidCanvas: View {
                     let normalizedX = Double(x / size.width)
                     let wave1 = sin(normalizedX * 15.0 + t * 0.9) * waveAmplitude
                     let wave2 = sin(normalizedX * 31.0 - t * 0.5) * waveAmplitude * 0.28
+                    let microRipple = sin(normalizedX * 73.0 + t * 1.7 + flow * 4.0) * (0.7 + Double(energy) * 2.0)
                     let wakePhase = normalizedX * 44.0 - t * 2.4 + flow * 3.0
                     let wakeEnvelope = exp(-abs(normalizedX - 0.5) * 2.8)
                     let wake = sin(wakePhase) * 7.0 * Double(energy) * wakeEnvelope
-                    let waveOffset = CGFloat(wave1 + wave2 + wake)
+                    let waveOffset = CGFloat(wave1 + wave2 + wake + microRipple)
                     let slopeOffset = slope * (x - size.width / 2)
                     let y = surface + waveOffset + slopeOffset
                     liquid.addLine(to: CGPoint(x: x, y: y))
@@ -110,7 +112,7 @@ private struct FluidCanvas: View {
                 liquid.closeSubpath()
 
                 let beer = drink == .beer
-                let liquidColors: [Color] = beer ? [Color(red: 1.0, green: 0.72, blue: 0.14), Color(red: 0.90, green: 0.40, blue: 0.025), Color(red: 0.46, green: 0.10, blue: 0.004)] : [Color(red: 0.25, green: 0.035, blue: 0.02), Color(red: 0.035, green: 0.004, blue: 0.003)]
+                let liquidColors: [Color] = beer ? [Color(red: 1.0, green: 0.74, blue: 0.15), Color(red: 0.93, green: 0.46, blue: 0.035), Color(red: 0.50, green: 0.12, blue: 0.004)] : [Color(red: 0.25, green: 0.035, blue: 0.02), Color(red: 0.035, green: 0.004, blue: 0.003)]
                 context.fill(liquid, with: .linearGradient(Gradient(colors: liquidColors), startPoint: CGPoint(x: 0, y: surface), endPoint: CGPoint(x: 0, y: size.height)))
                 context.fill(liquid, with: .radialGradient(Gradient(colors: [.white.opacity(beer ? 0.15 : 0.05), .clear]), center: CGPoint(x: size.width * 0.42, y: surface + size.height * 0.30), startRadius: 0, endRadius: size.width * 0.78))
                 context.fill(liquid, with: .linearGradient(Gradient(colors: [.black.opacity(0.18), .clear, .black.opacity(0.24)]), startPoint: CGPoint(x: 0, y: 0), endPoint: CGPoint(x: size.width, y: 0)))
@@ -120,10 +122,10 @@ private struct FluidCanvas: View {
                 // then quickly attenuates as the liquid gets deeper.
                 if beer {
                     var surfaceScatter = Path()
-                    surfaceScatter.addRect(CGRect(x: -20, y: surface - 2, width: size.width + 40, height: 86))
+                    surfaceScatter.addRect(CGRect(x: -20, y: surface - 2, width: size.width + 40, height: 110))
                     context.drawLayer { layer in
                         layer.clip(to: liquid)
-                        layer.fill(surfaceScatter, with: .linearGradient(Gradient(colors: [.white.opacity(0.18), .yellow.opacity(0.05), .clear]), startPoint: CGPoint(x: 0, y: surface), endPoint: CGPoint(x: 0, y: surface + 86)))
+                        layer.fill(surfaceScatter, with: .linearGradient(Gradient(colors: [.white.opacity(0.20), .yellow.opacity(0.065), .clear]), startPoint: CGPoint(x: 0, y: surface), endPoint: CGPoint(x: 0, y: surface + 110)))
                     }
                 }
 
@@ -141,6 +143,14 @@ private struct FluidCanvas: View {
                             layer.stroke(lightShaft, with: .color(.white.opacity(0.045 + energy * 0.035)), lineWidth: 17)
                         }
                     }
+                }
+
+                var depthHaze = Path()
+                depthHaze.addRect(CGRect(x: -20, y: size.height - 170, width: size.width + 40, height: 190))
+                context.drawLayer { layer in
+                    layer.clip(to: liquid)
+                    layer.addFilter(.blur(radius: 16))
+                    layer.fill(depthHaze, with: .linearGradient(Gradient(colors: [.clear, .black.opacity(beer ? 0.10 : 0.17)]), startPoint: CGPoint(x: 0, y: size.height - 170), endPoint: CGPoint(x: 0, y: size.height)))
                 }
 
                 // The phone edges act like the inside wall of a glass: a faint meniscus
@@ -171,6 +181,17 @@ private struct FluidCanvas: View {
                 }
                 context.stroke(leftMeniscus, with: .color(.white.opacity(beer ? 0.12 : 0.04)), lineWidth: 1.2)
                 context.stroke(rightMeniscus, with: .color(.white.opacity(beer ? 0.10 : 0.04)), lineWidth: 1.2)
+                context.drawLayer { layer in
+                    layer.addFilter(.blur(radius: 9))
+                    var leftEdge = Path()
+                    leftEdge.move(to: CGPoint(x: 3, y: surface + 18))
+                    leftEdge.addLine(to: CGPoint(x: 3, y: size.height))
+                    var rightEdge = Path()
+                    rightEdge.move(to: CGPoint(x: size.width - 3, y: surface + 18))
+                    rightEdge.addLine(to: CGPoint(x: size.width - 3, y: size.height))
+                    layer.stroke(leftEdge, with: .color(.white.opacity(beer ? 0.075 : 0.03)), lineWidth: 10)
+                    layer.stroke(rightEdge, with: .color(.black.opacity(beer ? 0.17 : 0.22)), lineWidth: 14)
+                }
 
                 let foam = beer ? Color(red: 1.0, green: 0.90, blue: 0.66) : Color(red: 0.28, green: 0.08, blue: 0.06)
                 var foamBand = Path()
@@ -265,6 +286,18 @@ private struct FluidCanvas: View {
                     layer.stroke(foamReflection, with: .color(.white.opacity(beer ? 0.36 : 0.12)), lineWidth: 3.5)
                 }
 
+                if beer {
+                    for i in 0..<9 {
+                        let seed = Double(i) * 8.31
+                        let x = CGFloat((sin(seed * 1.91 + t * 0.12) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
+                        let y = surface - foamHeight * 0.14 + CGFloat(sin(seed * 1.4 + t * 0.4) * 3.0)
+                        var wetHighlight = Path()
+                        wetHighlight.move(to: CGPoint(x: x - 8, y: y))
+                        wetHighlight.addCurve(to: CGPoint(x: x + 10, y: y + 1), control1: CGPoint(x: x - 3, y: y - 3), control2: CGPoint(x: x + 4, y: y + 3))
+                        context.stroke(wetHighlight, with: .color(.white.opacity(0.18)), lineWidth: 1.4)
+                    }
+                }
+
                 var sheen = Path()
                 sheen.move(to: CGPoint(x: size.width * 0.18, y: surface + 35))
                 sheen.addLine(to: CGPoint(x: size.width * 0.28, y: size.height))
@@ -315,7 +348,8 @@ private struct FluidCanvas: View {
                         let r = CGFloat(2.2 + depth * 3.0)
                         let glow = Path(ellipseIn: CGRect(x: x - r * 1.5, y: y - r * 1.5, width: r * 3, height: r * 3))
                         layer.fill(glow, with: .color(.white.opacity(beer ? 0.025 + depth * 0.03 : 0.012)))
-                        let ring = Path(ellipseIn: CGRect(x: x - r, y: y - r * 0.78, width: r * 2, height: r * 1.56))
+                        let aspect = 0.62 + depth * 0.32
+                        let ring = Path(ellipseIn: CGRect(x: x - r, y: y - r * aspect, width: r * 2, height: r * aspect * 2))
                         layer.stroke(ring, with: .color(.white.opacity(beer ? 0.20 + depth * 0.16 : 0.10)), lineWidth: 1.0 + depth * 0.35)
                     }
                 }
@@ -329,6 +363,16 @@ private struct FluidCanvas: View {
                         caustic.addCurve(to: CGPoint(x: size.width + 20, y: y + 10), control1: CGPoint(x: size.width * 0.28, y: y - 12), control2: CGPoint(x: size.width * 0.72, y: y + 18))
                         layer.stroke(caustic, with: .color(.white.opacity(beer ? 0.035 : 0.018)), lineWidth: 7)
                     }
+                }
+
+                // Final optical pass: a very soft diagonal reflection from the phone's
+                // cover glass keeps the full-screen liquid from feeling like a flat render.
+                var coverGlare = Path()
+                coverGlare.move(to: CGPoint(x: -size.width * 0.18, y: size.height * 0.35))
+                coverGlare.addLine(to: CGPoint(x: size.width * 0.56, y: -20))
+                context.drawLayer { layer in
+                    layer.addFilter(.blur(radius: 24))
+                    layer.stroke(coverGlare, with: .color(.white.opacity(beer ? 0.028 : 0.012)), lineWidth: 30)
                 }
             }
         }
@@ -356,7 +400,8 @@ private final class MotionManager: ObservableObject {
             self.tiltVelocity += springForce / 30.0
             // A real glass reacts to a quick hand movement before its angle settles.
             // Feed lateral user acceleration into the same inertial slosh velocity.
-            let lateralImpulse = max(-0.035, min(0.035, motion.userAcceleration.x * 0.018))
+            let handJolt = motion.userAcceleration.x * 0.018 + motion.userAcceleration.y * 0.008
+            let lateralImpulse = max(-0.035, min(0.035, handJolt))
             self.tiltVelocity += lateralImpulse
             self.tilt += self.tiltVelocity / 30.0
             self.tilt = max(-0.55, min(0.55, self.tilt))
