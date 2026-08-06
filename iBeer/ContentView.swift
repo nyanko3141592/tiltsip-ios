@@ -116,7 +116,8 @@ private struct FluidCanvas: View {
                 let beer = drink == .beer
                 let liquidColors: [Color] = beer ? [Color(red: 1.0, green: 0.74, blue: 0.15), Color(red: 0.93, green: 0.46, blue: 0.035), Color(red: 0.50, green: 0.12, blue: 0.004)] : [Color(red: 0.25, green: 0.035, blue: 0.02), Color(red: 0.035, green: 0.004, blue: 0.003)]
                 context.fill(liquid, with: .linearGradient(Gradient(colors: liquidColors), startPoint: CGPoint(x: 0, y: surface), endPoint: CGPoint(x: 0, y: size.height)))
-                context.fill(liquid, with: .radialGradient(Gradient(colors: [.white.opacity(beer ? 0.15 : 0.05), .clear]), center: CGPoint(x: size.width * 0.42, y: surface + size.height * 0.30), startRadius: 0, endRadius: size.width * 0.78))
+                let lightCenterX = size.width * (0.42 + CGFloat(tilt) * 0.12)
+                context.fill(liquid, with: .radialGradient(Gradient(colors: [.white.opacity(beer ? 0.15 : 0.05), .clear]), center: CGPoint(x: lightCenterX, y: surface + size.height * 0.30), startRadius: 0, endRadius: size.width * 0.78))
                 context.fill(liquid, with: .linearGradient(Gradient(colors: [.black.opacity(0.18), .clear, .black.opacity(0.24)]), startPoint: CGPoint(x: 0, y: 0), endPoint: CGPoint(x: size.width, y: 0)))
                 context.fill(liquid, with: .radialGradient(Gradient(colors: [.clear, .black.opacity(beer ? 0.16 : 0.24)]), center: CGPoint(x: size.width * 0.5, y: size.height * 1.08), startRadius: size.width * 0.08, endRadius: size.width * 0.92))
 
