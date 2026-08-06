@@ -63,7 +63,7 @@ private struct FluidCanvas: View {
                 let surface = size.height * (0.08 + CGFloat(1.0 - fill) * 0.80)
                 let slope = CGFloat(max(-0.55, min(0.55, tilt))) * 0.28
                 let waveAmplitude = 4.0 + CGFloat(energy) * 18.0
-                let foamHeight = 8.0 + CGFloat(fill) * 22.0
+                let foamHeight = 18.0 + CGFloat(fill) * 42.0
                 var liquid = Path()
                 liquid.move(to: CGPoint(x: 0, y: surface))
                 for x in stride(from: 0, through: size.width, by: 8) {
@@ -93,6 +93,14 @@ private struct FluidCanvas: View {
                 foamBand.addLine(to: CGPoint(x: 0, y: surface + 27))
                 foamBand.closeSubpath()
                 context.fill(foamBand, with: .linearGradient(Gradient(colors: [foam.opacity(0.98), foam.opacity(0.70)]), startPoint: CGPoint(x: 0, y: surface - foamHeight), endPoint: CGPoint(x: 0, y: surface + 27)))
+
+                var foamShadow = Path()
+                foamShadow.move(to: CGPoint(x: -10, y: surface + 5))
+                foamShadow.addCurve(to: CGPoint(x: size.width + 10, y: surface + 7), control1: CGPoint(x: size.width * 0.28, y: surface - 1), control2: CGPoint(x: size.width * 0.70, y: surface + 14))
+                context.drawLayer { layer in
+                    layer.addFilter(.blur(radius: 7))
+                    layer.stroke(foamShadow, with: .color(.black.opacity(beer ? 0.24 : 0.16)), lineWidth: 10)
+                }
 
                 for i in 0..<42 {
                     let seed = Double(i) * 9.173
