@@ -107,6 +107,35 @@ private struct FluidCanvas: View {
                 context.fill(liquid, with: .radialGradient(Gradient(colors: [.white.opacity(beer ? 0.15 : 0.05), .clear]), center: CGPoint(x: size.width * 0.42, y: surface + size.height * 0.30), startRadius: 0, endRadius: size.width * 0.78))
                 context.fill(liquid, with: .linearGradient(Gradient(colors: [.black.opacity(0.18), .clear, .black.opacity(0.24)]), startPoint: CGPoint(x: 0, y: 0), endPoint: CGPoint(x: size.width, y: 0)))
 
+                // The phone edges act like the inside wall of a glass: a faint meniscus
+                // and side falloff make the liquid feel curved instead of painted flat.
+                var surfaceGleam = Path()
+                surfaceGleam.move(to: CGPoint(x: -8, y: surface + 2))
+                for x in stride(from: 0, through: size.width, by: 8) {
+                    let normalizedX = Double(x / size.width)
+                    let wave = sin(normalizedX * 15.0 + t * 0.9) * waveAmplitude
+                    let ripple = sin(normalizedX * 31.0 - t * 0.5) * waveAmplitude * 0.28
+                    surfaceGleam.addLine(to: CGPoint(x: x, y: surface + CGFloat(wave + ripple) + slope * (x - size.width / 2) - 1))
+                }
+                context.drawLayer { layer in
+                    layer.addFilter(.blur(radius: 2.5))
+                    layer.stroke(surfaceGleam, with: .color(.white.opacity(beer ? 0.22 : 0.08)), lineWidth: 2.2)
+                }
+
+                var leftMeniscus = Path()
+                leftMeniscus.move(to: CGPoint(x: 1, y: surface - 10))
+                leftMeniscus.addCurve(to: CGPoint(x: 10, y: surface + 20), control1: CGPoint(x: 1, y: surface - 2), control2: CGPoint(x: 5, y: surface + 10))
+                var rightMeniscus = Path()
+                rightMeniscus.move(to: CGPoint(x: size.width - 1, y: surface - 10))
+                rightMeniscus.addCurve(to: CGPoint(x: size.width - 10, y: surface + 20), control1: CGPoint(x: size.width - 1, y: surface - 2), control2: CGPoint(x: size.width - 5, y: surface + 10))
+                context.drawLayer { layer in
+                    layer.addFilter(.blur(radius: 3))
+                    layer.stroke(leftMeniscus, with: .color(.black.opacity(beer ? 0.28 : 0.34)), lineWidth: 7)
+                    layer.stroke(rightMeniscus, with: .color(.black.opacity(beer ? 0.28 : 0.34)), lineWidth: 7)
+                }
+                context.stroke(leftMeniscus, with: .color(.white.opacity(beer ? 0.12 : 0.04)), lineWidth: 1.2)
+                context.stroke(rightMeniscus, with: .color(.white.opacity(beer ? 0.10 : 0.04)), lineWidth: 1.2)
+
                 let foam = beer ? Color(red: 1.0, green: 0.90, blue: 0.66) : Color(red: 0.28, green: 0.08, blue: 0.06)
                 var foamBand = Path()
                 foamBand.move(to: CGPoint(x: 0, y: surface - foamHeight - slope * size.width / 2))
@@ -153,6 +182,18 @@ private struct FluidCanvas: View {
                     context.stroke(cell, with: .color(.white.opacity(beer ? 0.34 : 0.16)), lineWidth: 0.9)
                     context.fill(Path(ellipseIn: CGRect(x: x - radius * 0.48, y: y - radius * 0.28, width: radius * 0.38, height: radius * 0.22)), with: .color(.white.opacity(beer ? 0.56 : 0.24)))
                     context.fill(Path(ellipseIn: CGRect(x: x + radius * 0.18, y: y + radius * 0.18, width: radius * 0.52, height: radius * 0.24)), with: .color(.black.opacity(0.15)))
+                }
+
+                // A few larger foam pockets get a shaded interior, like real bubbles
+                // catching the overhead light rather than identical outlined circles.
+                for i in 0..<16 {
+                    let seed = Double(i) * 11.843
+                    let x = CGFloat((sin(seed * 1.7) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
+                    let y = surface - foamHeight * 0.58 + CGFloat((sin(seed * 2.3 + t * 0.16) * 0.5 + 0.5)) * (foamHeight * 0.82)
+                    let radius = CGFloat(4 + (i % 3) * 2)
+                    let bubbleRect = CGRect(x: x - radius, y: y - radius * 0.58, width: radius * 2, height: radius * 1.16)
+                    context.fill(Path(ellipseIn: bubbleRect), with: .radialGradient(Gradient(colors: [.white.opacity(0.44), foam.opacity(0.18), .black.opacity(0.16)]), center: CGPoint(x: x - radius * 0.28, y: y - radius * 0.24), startRadius: 0, endRadius: radius * 1.25))
+                    context.stroke(Path(ellipseIn: bubbleRect.insetBy(dx: 0.8, dy: 0.8)), with: .color(.white.opacity(0.30)), lineWidth: 0.8)
                 }
 
                 var foamReflection = Path()
