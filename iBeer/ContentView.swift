@@ -15,7 +15,7 @@ struct ContentView: View {
         ZStack {
             FluidBackdrop(drink: drink, fill: motion.level, tilt: motion.tilt, energy: motion.sloshEnergy, flow: motion.flow)
             if drink == .beer {
-                FoamPhotoTexture(fill: motion.level, tilt: motion.tilt)
+                FoamPhotoTexture(fill: motion.level, tilt: motion.tilt, energy: motion.sloshEnergy)
             }
             MetalGlassView(drink: drink, fill: motion.level, carbonation: 0.82, tilt: motion.tilt * 180 / .pi, isPouring: false)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -40,6 +40,7 @@ struct ContentView: View {
 private struct FoamPhotoTexture: View {
     let fill: Double
     let tilt: Double
+    let energy: Double
 
     var body: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 20.0)) { timeline in
@@ -53,7 +54,7 @@ private struct FoamPhotoTexture: View {
                     .scaledToFill()
                     .frame(width: proxy.size.width, height: foamHeight + 28)
                     .clipped()
-                    .opacity(0.145 + shimmer)
+                    .opacity(0.145 + shimmer + energy * 0.018)
                     .blendMode(.screen)
                     .rotationEffect(.radians(tilt * 0.18), anchor: .center)
                     .offset(x: drift + CGFloat(tilt) * 22.0, y: surface - foamHeight)
