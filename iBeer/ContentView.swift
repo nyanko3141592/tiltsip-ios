@@ -45,7 +45,7 @@ private struct FoamPhotoTexture: View {
         TimelineView(.animation(minimumInterval: 1.0 / 20.0)) { timeline in
             GeometryReader { proxy in
                 let surface = proxy.size.height * (0.08 + CGFloat(1.0 - fill) * 0.80)
-                let foamHeight = 14.0 + CGFloat(fill) * 46.0 + CGFloat(energy) * 4.0
+                let foamHeight = 14.0 + CGFloat(fill) * 46.0
                 let shimmer = sin(timeline.date.timeIntervalSinceReferenceDate * 0.72) * 0.018
                 let drift = CGFloat(sin(timeline.date.timeIntervalSinceReferenceDate * 0.31) * 1.2)
                 Image("FoamTextureV2")
@@ -247,7 +247,7 @@ private struct FluidCanvas: View {
                     let seed = Double(i) * 9.173
                     let x = CGFloat((sin(seed) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
                     let y = surface - foamHeight + CGFloat((sin(seed * 1.7 + t * 0.3) * 0.5 + 0.5)) * (foamHeight + 20)
-                    let radius = CGFloat(2 + (i % 4) * 2)
+                    let radius = CGFloat(2 + Double(i % 4) * 2)
                     context.fill(Path(ellipseIn: CGRect(x: x - radius, y: y - radius * 0.6, width: radius * 2, height: radius * 1.2)), with: .color(foam.opacity(0.22)))
                 }
 
