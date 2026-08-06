@@ -143,6 +143,7 @@ private final class MotionManager: ObservableObject {
     @Published var tilt: Double = 0
     @Published var level: Double = 0.94
     private let manager = CMMotionManager()
+    private var tiltVelocity: Double = 0
 
     func start() {
         guard manager.isDeviceMotionAvailable, !manager.isDeviceMotionActive else { return }
@@ -151,9 +152,11 @@ private final class MotionManager: ObservableObject {
             guard let self, let motion else { return }
             let roll = motion.attitude.roll
             let pitch = abs(motion.attitude.pitch)
-            withAnimation(.interactiveSpring(response: 0.18, dampingFraction: 0.86)) {
-                self.tilt = max(-0.55, min(0.55, roll))
-            }
+            let targetTilt = max(-0.55, min(0.55, roll))
+            let springForce = (targetTilt - self.tilt) * 13.0 - self.tiltVelocity * 3.8
+            self.tiltVelocity += springForce / 30.0
+            self.tilt += self.tiltVelocity / 30.0
+            self.tilt = max(-0.55, min(0.55, self.tilt))
             if pitch > 0.92 {
                 let sip = min(0.0035, 0.00035 + (pitch - 0.92) * 0.0022)
                 self.level = max(0.06, self.level - sip)
