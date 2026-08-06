@@ -297,6 +297,14 @@ private struct FluidCanvas: View {
                         wetHighlight.addCurve(to: CGPoint(x: x + 10, y: y + 1), control1: CGPoint(x: x - 3, y: y - 3), control2: CGPoint(x: x + 4, y: y + 3))
                         context.stroke(wetHighlight, with: .color(.white.opacity(0.18)), lineWidth: 1.4)
                     }
+                    for i in 0..<12 {
+                        let seed = Double(i) * 6.73
+                        let x = CGFloat((sin(seed * 2.11) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
+                        let y = surface + 11 + CGFloat((sin(seed * 1.8) * 0.5 + 0.5) * 12)
+                        let radius = CGFloat(2.0 + (i % 3))
+                        let lace = Path(ellipseIn: CGRect(x: x - radius, y: y - radius * 0.45, width: radius * 2, height: radius * 0.9))
+                        context.stroke(lace, with: .color(.white.opacity(0.16)), lineWidth: 0.7)
+                    }
                 }
 
                 var sheen = Path()
