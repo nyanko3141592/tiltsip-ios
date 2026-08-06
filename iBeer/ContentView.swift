@@ -101,6 +101,18 @@ private struct FluidCanvas: View {
                 let surfaceY: (CGFloat) -> CGFloat = { x in
                     surface + slope * (x - size.width * 0.5)
                 }
+                let buoyancyX = CGFloat(sin(surfaceAngle))
+                let buoyancyY = CGFloat(-cos(surfaceAngle))
+                let tangentX = CGFloat(cos(surfaceAngle))
+                let tangentY = CGFloat(sin(surfaceAngle))
+                let bubbleTravel = hypot(size.width, size.height) * 1.08
+                let bubblePoint: (CGFloat, Double, CGFloat) -> CGPoint = { surfaceX, progress, lateralOffset in
+                    let distanceToSurface = CGFloat(1.0 - progress) * bubbleTravel
+                    return CGPoint(
+                        x: surfaceX - buoyancyX * distanceToSurface + tangentX * lateralOffset,
+                        y: surfaceY(surfaceX) - buoyancyY * distanceToSurface + tangentY * lateralOffset
+                    )
+                }
                 let waveAmplitude = 1.5 + CGFloat(energy) * 14.0
                 let foamHeight = 14.0 + CGFloat(fill) * 46.0
                 let foamNormalScale = min(1.65, sqrt(1.0 + slope * slope))
@@ -359,11 +371,13 @@ private struct FluidCanvas: View {
 
                 for i in 0..<95 {
                     let seed = Double(i) * 12.9898
-                    let x = CGFloat((sin(seed) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
+                    let surfaceX = CGFloat((sin(seed) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
                     let speed = 0.015 + Double(i % 5) * 0.004
                     let progress = (t * speed + Double(i) * 0.071).truncatingRemainder(dividingBy: 1.0)
-                    let drift = CGFloat(flow) * progress * 16.0
-                    let y = size.height - progress * (size.height - surface + 30) + drift
+                    let lateral = CGFloat(sin(t * 0.7 + seed) * 3.0) + CGFloat(flow) * CGFloat(progress) * 10.0
+                    let point = bubblePoint(surfaceX, progress, lateral)
+                    let x = point.x
+                    let y = point.y
                     let r = CGFloat(1.0 + Double(i % 3))
                     let depthLight = 0.55 + progress * 0.55
                     let bubble = Path(ellipseIn: CGRect(x: x - r, y: y - r, width: r * 2, height: r * 2))
@@ -375,9 +389,12 @@ private struct FluidCanvas: View {
                 // Fine carbonation dust fills the spaces between the larger bubbles.
                 for i in 0..<52 {
                     let seed = Double(i) * 3.173
-                    let x = CGFloat((sin(seed * 3.7) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
+                    let surfaceX = CGFloat((sin(seed * 3.7) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
                     let progress = (t * (0.010 + Double(i % 4) * 0.002) + seed).truncatingRemainder(dividingBy: 1.0)
-                    let y = size.height - progress * (size.height - surface + 20)
+                    let lateral = CGFloat(sin(t * 0.45 + seed) * 1.5)
+                    let point = bubblePoint(surfaceX, progress, lateral)
+                    let x = point.x
+                    let y = point.y
                     let r = CGFloat(0.35 + Double(i % 3) * 0.22)
                     context.fill(Path(ellipseIn: CGRect(x: x - r, y: y - r, width: r * 2, height: r * 2)), with: .color(.white.opacity(beer ? 0.16 : 0.07)))
                 }
@@ -386,12 +403,17 @@ private struct FluidCanvas: View {
                     layer.addFilter(.blur(radius: 1.8))
                     for i in 0..<8 {
                         let seed = Double(i) * 19.17
-                        let x = CGFloat((sin(seed * 2.8) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
+                        let surfaceX = CGFloat((sin(seed * 2.8) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
                         let rise = (t * 0.014 + seed).truncatingRemainder(dividingBy: 1.0)
-                        let y = size.height - rise * (size.height - surface + 20)
+                        let lateral = CGFloat(sin(t * 0.38 + seed) * 4.0)
+                        let point = bubblePoint(surfaceX, rise, lateral)
                         var wakeTrail = Path()
-                        wakeTrail.move(to: CGPoint(x: x, y: y + 10))
-                        wakeTrail.addCurve(to: CGPoint(x: x + CGFloat(flow) * 7, y: y - 8), control1: CGPoint(x: x - 3, y: y + 3), control2: CGPoint(x: x + 5, y: y - 2))
+                        wakeTrail.move(to: CGPoint(x: point.x - buoyancyX * 11, y: point.y - buoyancyY * 11))
+                        wakeTrail.addCurve(
+                            to: CGPoint(x: point.x + buoyancyX * 7, y: point.y + buoyancyY * 7),
+                            control1: CGPoint(x: point.x - buoyancyX * 5 - tangentX * 3, y: point.y - buoyancyY * 5 - tangentY * 3),
+                            control2: CGPoint(x: point.x + buoyancyX * 2 + tangentX * 4, y: point.y + buoyancyY * 2 + tangentY * 4)
+                        )
                         layer.stroke(wakeTrail, with: .color(.white.opacity(beer ? 0.035 : 0.015)), lineWidth: 2.0)
                     }
                 }
@@ -402,8 +424,10 @@ private struct FluidCanvas: View {
                     let originX = CGFloat((sin(seed) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
                     for bead in 0..<7 {
                         let beadPhase = (t * (0.018 + Double(lane % 4) * 0.002) + Double(bead) * 0.11 + seed).truncatingRemainder(dividingBy: 1.0)
-                        let y = size.height - beadPhase * (size.height - surface + 24)
-                        let x = originX + CGFloat(sin(beadPhase * 13.0 + seed) * (4.0 + beadPhase * 16.0)) + CGFloat(flow) * beadPhase * 10
+                        let lateral = CGFloat(sin(beadPhase * 13.0 + seed) * (4.0 + beadPhase * 16.0)) + CGFloat(flow) * CGFloat(beadPhase) * 8
+                        let point = bubblePoint(originX, beadPhase, lateral)
+                        let x = point.x
+                        let y = point.y
                         let r = CGFloat(0.8 + Double((lane + bead) % 3) * 0.65)
                         let beadPath = Path(ellipseIn: CGRect(x: x - r, y: y - r, width: r * 2, height: r * 2))
                         context.stroke(beadPath, with: .color(.white.opacity(beer ? 0.22 : 0.12)), lineWidth: 0.65)
@@ -418,9 +442,12 @@ private struct FluidCanvas: View {
                     for i in 0..<18 {
                         let seed = Double(i) * 23.71
                         let depth = (sin(seed * 1.13) * 0.5 + 0.5)
-                        let x = CGFloat((sin(seed * 1.9) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
+                        let surfaceX = CGFloat((sin(seed * 1.9) * 43758.5).truncatingRemainder(dividingBy: 1.0).magnitude) * size.width
                         let rise = (t * (0.006 + depth * 0.006) + seed).truncatingRemainder(dividingBy: 1.0)
-                        let y = size.height - rise * (size.height - surface + 18)
+                        let lateral = CGFloat(sin(t * 0.3 + seed) * (2.0 + depth * 5.0))
+                        let point = bubblePoint(surfaceX, rise, lateral)
+                        let x = point.x
+                        let y = point.y
                         let r = CGFloat(2.2 + depth * 3.0)
                         let glow = Path(ellipseIn: CGRect(x: x - r * 1.5, y: y - r * 1.5, width: r * 3, height: r * 3))
                         layer.fill(glow, with: .color(.white.opacity(beer ? 0.025 + depth * 0.03 : 0.012)))
