@@ -467,8 +467,11 @@ private final class MotionManager: ObservableObject {
             // toward the mouth, liquid spills continuously over the top edge.
             // The drain rate is angle-proportional, so a gentle sip is slow and a
             // fully tipped phone empties like a joke glass.
-            let drinkingPitch = -signedPitch
-            let drinkingThreshold = 0.82
+            // Device mounting/orientation can report the forward pitch with either
+            // sign. Once the phone reaches the spill angle, either sign means the
+            // top rim is over the mouth, so use its magnitude for the joke behavior.
+            let drinkingPitch = abs(signedPitch)
+            let drinkingThreshold = 0.70
             self.isDrinking = drinkingPitch > drinkingThreshold && self.level > 0.06
             if self.isDrinking {
                 let mouthAngle = drinkingPitch - drinkingThreshold
