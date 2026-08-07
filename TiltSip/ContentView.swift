@@ -64,7 +64,18 @@ struct ContentView: View {
             }
         }
         .preferredColorScheme(.dark)
-        .task { motion.start() }
+        .task {
+#if DEBUG
+            let arguments = ProcessInfo.processInfo.arguments
+            if arguments.contains("-appStoreScreenshotCola") {
+                drink = .cola
+            }
+            if arguments.contains("-appStoreScreenshotInfo") {
+                presentedSheet = .information
+            }
+#endif
+            motion.start()
+        }
         .sheet(item: $presentedSheet) { _ in
             AppInformationView(
                 onRefill: { motion.refill() },

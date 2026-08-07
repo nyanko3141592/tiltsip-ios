@@ -1,0 +1,43 @@
+{
+  "slides": [
+    {
+      "screenshot": "screenshots/raw/ja/01-beer.png",
+      "background": "screenshots/raw/ja/01-beer.png",
+      "title": "Your iPhone is the glass",
+      "subtitle": "Full-screen liquid with responsive foam and reflections",
+      "output": "01-glass.png",
+      "accent": [242, 166, 28],
+      "blur": 24,
+      "warm_overlay": 24,
+      "phone_y": 600,
+      "phone_width": 980,
+      "mark": "TiltSip"
+    },
+    {
+      "screenshot": "screenshots/raw/ja/02-cola.png",
+      "background": "screenshots/raw/ja/02-cola.png",
+      "title": "Tap to switch drinks",
+      "subtitle": "Enjoy distinct beer and cola materials",
+      "output": "02-drinks.png",
+      "accent": [190, 55, 40],
+      "blur": 24,
+      "warm_overlay": 20,
+      "phone_y": 600,
+      "phone_width": 980,
+      "mark": "TiltSip"
+    },
+    {
+      "screenshot": "screenshots/raw/ja/01-beer.png",
+      "background": "screenshots/raw/ja/01-beer.png",
+      "title": "No ads. No tracking.",
+      "subtitle": "Motion is processed only on your iPhone",
+      "output": "03-private.png",
+      "accent": [57, 132, 220],
+      "blur": 24,
+      "warm_overlay": 24,
+      "phone_y": 600,
+      "phone_width": 980,
+      "mark": "TiltSip"
+    }
+  ]
+}

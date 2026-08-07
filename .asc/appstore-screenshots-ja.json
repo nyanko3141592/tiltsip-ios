@@ -1,0 +1,43 @@
+{
+  "slides": [
+    {
+      "screenshot": "screenshots/raw/ja/01-beer.png",
+      "background": "screenshots/raw/ja/01-beer.png",
+      "title": "iPhoneがグラスになる",
+      "subtitle": "泡と反射まで動く、全画面の液体シミュレーション",
+      "output": "01-glass.png",
+      "accent": [242, 166, 28],
+      "blur": 24,
+      "warm_overlay": 24,
+      "phone_y": 600,
+      "phone_width": 980,
+      "mark": "TiltSip"
+    },
+    {
+      "screenshot": "screenshots/raw/ja/02-cola.png",
+      "background": "screenshots/raw/ja/02-cola.png",
+      "title": "タップでドリンク変更",
+      "subtitle": "ビールとコーラ、ふたつの質感を楽しめる",
+      "output": "02-drinks.png",
+      "accent": [190, 55, 40],
+      "blur": 24,
+      "warm_overlay": 20,
+      "phone_y": 600,
+      "phone_width": 980,
+      "mark": "TiltSip"
+    },
+    {
+      "screenshot": "screenshots/raw/ja/03-info.png",
+      "background": "screenshots/raw/ja/01-beer.png",
+      "title": "傾けて、飲んで、補充",
+      "subtitle": "広告・アカウント・トラッキングなしの買い切りアプリ",
+      "output": "03-private.png",
+      "accent": [57, 132, 220],
+      "blur": 24,
+      "warm_overlay": 24,
+      "phone_y": 600,
+      "phone_width": 980,
+      "mark": "TiltSip"
+    }
+  ]
+}
