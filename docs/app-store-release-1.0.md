@@ -7,8 +7,8 @@ Submitted to App Review on 2026-08-07 (JST).
 - App ID: `6798895099`
 - Bundle ID: `com.naoki.tiltsip`
 - Version ID: `05ebc249-f5d3-4976-bedf-7442859f2f2e`
-- Build ID: `af730b30-94ea-4e45-b19d-a4db27633466`
-- Review submission ID: `dc6c945b-da23-410f-9a22-1e040de55ca9`
+- Build ID: `efb0b025-1a54-436a-88d4-e71cebdedfaa`
+- Review submission ID: `aec37e5d-9dbc-49e0-9cb3-2ceaa87362df`
 - Submitted state: `WAITING_FOR_REVIEW`
 - Release: automatic after approval
 
@@ -26,7 +26,7 @@ Submitted to App Review on 2026-08-07 (JST).
 ## Build
 
 - Marketing version: `1.0`
-- Build number: `1`
+- Build number: `2`
 - Minimum iOS version: `18.0`
 - Xcode: `26.2`
 - Distribution profile: `TiltSip App Store 2026`
@@ -54,7 +54,11 @@ entry. The exported app contains its asset catalog and privacy manifest.
 - `asc review doctor` before submission: 0 submission blockers
 - Final App Store status: `WAITING_FOR_REVIEW`
 
-The high-level submission command initially observed the newly-created review
-item before its version relationship had propagated. After verifying that the
-submission contained version 1.0 and its item was `READY_FOR_REVIEW`, the same
-submission was finalized through the lower-level submission endpoint.
+The first API-created submission (`dc6c945b-da23-410f-9a22-1e040de55ca9`)
+observed its review item before the version relationship had fully propagated.
+It was immediately returned as an unresolved/invalid-binary submission even
+though build 1 remained `VALID` and App Store Connect showed the binary as
+verified. That submission was canceled. Build 2 was freshly archived, signed,
+exported, uploaded, and validated, then submitted through the App Store Connect
+UI only after the draft visibly showed `1.0 (2)` as ready. The replacement
+submission is `WAITING_FOR_REVIEW` in both the App Review UI and submission API.
